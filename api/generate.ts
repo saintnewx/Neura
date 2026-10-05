@@ -8,7 +8,7 @@ export const maxDuration = 60;
 
 // Server-only NVIDIA configuration; the key never reaches the browser.
 const NVIDIA_ENDPOINT = "https://integrate.api.nvidia.com/v1/chat/completions";
-const MODEL = "deepseek-ai/deepseek-v4.1-flash";
+const MODEL = "meta/llama-3.1-8b-instruct";
 const SYSTEM_PROMPT =
   "Ты — профессиональный копирайтер. Пиши живо, конкретно, без воды. Учитывай тип контента: Пост/Email/Реклама/Reels.";
 const CONTENT_TYPES = new Set(["Пост", "Email", "Реклама", "Reels"]);

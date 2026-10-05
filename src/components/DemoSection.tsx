@@ -36,6 +36,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
   const lastRequest = useRef<GenerationRequest | null>(null);
   const requestId = useRef(0);
   const busy = useRef(false);
+  const abortController = useRef<AbortController | null>(null);
   const fieldId = useId();
   const isLoading = status === "loading";
   const closeToast = useCallback(() => setToastOpen(false), []);
@@ -44,6 +45,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
   useEffect(
     () => () => {
       requestId.current += 1;
+      abortController.current?.abort();
     },
     [],
   );
@@ -56,10 +58,19 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
     const currentId = ++requestId.current;
     lastRequest.current = request;
     setStatus("loading");
+    setResult("");
     setGenerationError("");
     setCopyError("");
+    abortController.current = new AbortController();
     try {
-      const text = await generateContent(request.task, request.type);
+      const text = await generateContent(
+        request.task,
+        request.type,
+        (content) => {
+          if (currentId === requestId.current) setResult(content);
+        },
+        abortController.current.signal,
+      );
       if (currentId !== requestId.current) return;
       setResult(text);
       setStatus("success");
@@ -73,7 +84,10 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
         setStatus("error");
       }
     } finally {
-      if (currentId === requestId.current) busy.current = false;
+      if (currentId === requestId.current) {
+        busy.current = false;
+        abortController.current = null;
+      }
     }
   }
 
@@ -203,7 +217,20 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                 AI CONTENT
               </span>
             </div>
-            {status === "loading" && <Skeleton />}
+            {status === "loading" && !result && <Skeleton />}
+            {result && status !== "idle" && (
+              <p
+                aria-live={isLoading ? "off" : "polite"}
+                className="mb-7 flex-1 whitespace-pre-wrap break-words text-base leading-[1.8]"
+              >
+                {result}
+              </p>
+            )}
+            {isLoading && result && (
+              <p role="status" className="mb-4 text-sm text-accent">
+                Neura продолжает писать…
+              </p>
+            )}
             {status === "idle" && (
               <div className="my-auto flex flex-col items-center py-10 text-center">
                 <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-line bg-bg/40 text-muted">
@@ -236,12 +263,6 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
             )}
             {status === "success" && (
               <>
-                <p
-                  aria-live="polite"
-                  className="mb-7 flex-1 whitespace-pre-wrap break-words text-base leading-[1.8]"
-                >
-                  {result}
-                </p>
                 <div className="flex flex-wrap gap-3 border-t border-line/60 pt-5">
                   <button
                     type="button"

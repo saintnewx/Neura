@@ -1,0 +1,10 @@
+# Dependencies, build output, and local credentials
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.local
+*.tsbuildinfo
+.DS_Store
+.vercel/

@@ -79,7 +79,7 @@ export default function Footer() {
             </div>
           ))}
         </nav>
-        {/* Actual demo terms and data handling, rather than inactive legal links. */}
+        {/* Current service terms and AI-provider data handling. */}
         <details
           id="legal"
           className="mt-10 rounded-xl border border-line/50 px-4 py-3 text-xs text-muted"
@@ -90,12 +90,11 @@ export default function Footer() {
           <p className="mt-3 leading-relaxed">
             Это демонстрационный интерфейс: тарифы, логотипы и отзывы приведены
             как примеры. Оплата и регистрация не подключены. Введённая задача
-            обрабатывается локальной заглушкой, не отправляется AI-провайдеру и
-            не сохраняется после ухода со страницы. Google Fonts получает
-            стандартные сетевые данные для загрузки шрифта. Не вводите
-            конфиденциальную информацию. При подключении реального API
-            необходимо опубликовать актуальные условия и политику обработки
-            данных.
+            передаётся AI-сервису NVIDIA для генерации текста. Приложение не
+            сохраняет историю задач; обработка данных провайдером регулируется
+            его условиями. Google Fonts получает стандартные сетевые данные для
+            загрузки шрифта. Не вводите конфиденциальную информацию. Проверьте
+            факты в сгенерированном тексте перед публикацией.
           </p>
         </details>
         <div className="mt-8 flex flex-col items-center justify-between gap-5 border-t border-line/60 pt-7 sm:flex-row">

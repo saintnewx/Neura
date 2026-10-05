@@ -29,6 +29,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
   const [type, setType] = useState<ContentType>("Пост");
   const [status, setStatus] = useState<GenerationStatus>("idle");
   const [result, setResult] = useState("");
+  const [generationError, setGenerationError] = useState("");
   const [toastOpen, setToastOpen] = useState(false);
   const [toastId, setToastId] = useState(0);
   const [copyError, setCopyError] = useState("");
@@ -55,14 +56,22 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
     const currentId = ++requestId.current;
     lastRequest.current = request;
     setStatus("loading");
+    setGenerationError("");
     setCopyError("");
     try {
       const text = await generateContent(request.task, request.type);
       if (currentId !== requestId.current) return;
       setResult(text);
       setStatus("success");
-    } catch {
-      if (currentId === requestId.current) setStatus("error");
+    } catch (error) {
+      if (currentId === requestId.current) {
+        setGenerationError(
+          error instanceof Error
+            ? error.message
+            : "Не удалось сгенерировать текст. Попробуйте снова.",
+        );
+        setStatus("error");
+      }
     } finally {
       if (currentId === requestId.current) busy.current = false;
     }
@@ -212,9 +221,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
               <div role="alert" className="my-auto py-8 text-center">
                 <AlertCircle size={32} className="mx-auto mb-4 text-error" />
                 <h3 className="text-xl">Что-то пошло не так</h3>
-                <p className="mt-3 text-sm text-muted">
-                  Не удалось сгенерировать текст. Попробуйте ещё раз.
-                </p>
+                <p className="mt-3 text-sm text-muted">{generationError}</p>
                 <button
                   type="button"
                   onClick={() =>
@@ -263,7 +270,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
               </>
             )}
             <p className="mt-auto pt-5 text-xs leading-relaxed text-muted">
-              Демо-режим. Проверьте факты и адаптируйте текст перед публикацией.
+              Проверьте факты и адаптируйте текст перед публикацией.
             </p>
           </div>
         </div>

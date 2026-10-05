@@ -111,7 +111,7 @@ OG-карточка предоставлена в SVG согласно ТЗ. Н�
 Серверная интеграция находится в `api/generate.ts`, клиент — в `src/lib/api.ts`.
 
 - Endpoint: `https://integrate.api.nvidia.com/v1/chat/completions`.
-- Модель: `meta/llama-3.1-8b-instruct`.
+- Модель: `openai/gpt-oss-20b`.
 - Параметры: `temperature: 0.8`, `max_tokens: 800`, `stream: true`.
 - System-промпт: «Ты — профессиональный копирайтер. Пиши живо, конкретно, без воды. Учитывай тип контента: Пост/Email/Реклама/Reels.»
 - Формат и описание задачи передаются в отдельном user-сообщении.

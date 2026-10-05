@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { once } from "node:events";
+import { STATUS_CODES } from "node:http";
 import { readSseData } from "../src/lib/sse.js";
 
 // vercel.json also sets this duration for the standalone Node.js Function.
@@ -17,42 +18,68 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-// Map provider failures to useful messages without exposing internal responses.
-function upstreamError(status: number): { status: number; error: string } {
-  if (status === 429) {
-    return {
-      status: 429,
-      error: "Слишком много запросов. Подождите немного и попробуйте снова.",
-    };
+// Preserve provider diagnostics while removing any echoed authorization secret.
+function redactKey(text: string, apiKey: string): string {
+  for (const value of new Set([apiKey, JSON.stringify(apiKey).slice(1, -1)])) {
+    if (value) text = text.split(value).join("[REDACTED]");
   }
-  if (status === 402) {
-    return {
-      status: 503,
-      error: "Лимит сервиса генерации исчерпан. Попробуйте позже.",
-    };
+  return text;
+}
+
+function providerMessage(value: unknown): string | undefined {
+  if (typeof value === "string") return value.trim() || undefined;
+  if (isRecord(value)) {
+    for (const field of ["error", "message", "detail", "title"]) {
+      const message = providerMessage(value[field]);
+      if (message) return message;
+    }
   }
-  if (status === 401 || status === 403) {
-    return {
-      status: 503,
-      error: "Сервис генерации временно недоступен. Попробуйте позже.",
-    };
+  return undefined;
+}
+
+function describeProviderError(
+  body: string,
+  status?: number,
+  statusText?: string,
+): string {
+  let message = body.trim();
+  try {
+    message = providerMessage(JSON.parse(body)) ?? message;
+  } catch {
+    /* Plain-text error bodies are also valid diagnostics. */
   }
-  if (status === 404) {
-    return {
-      status: 502,
-      error: "Выбранная AI-модель сейчас недоступна. Попробуйте позже.",
-    };
+  const label = status
+    ? `${status} ${statusText || STATUS_CODES[status] || "NVIDIA API error"}`
+    : "";
+  return message
+    ? label
+      ? `${label}: ${message}`
+      : message
+    : label || "NVIDIA вернула ошибку без описания.";
+}
+
+function providerErrorStatus(
+  data: Record<string, unknown>,
+): number | undefined {
+  const error = isRecord(data.error) ? data.error : {};
+  for (const value of [
+    data.status,
+    data.status_code,
+    data.code,
+    error.status,
+    error.status_code,
+    error.code,
+  ]) {
+    const code = typeof value === "string" ? Number(value) : value;
+    if (
+      typeof code === "number" &&
+      Number.isInteger(code) &&
+      code >= 400 &&
+      code <= 599
+    )
+      return code;
   }
-  if (status === 408 || status === 504) {
-    return {
-      status: 504,
-      error: "Генерация заняла слишком много времени. Попробуйте снова.",
-    };
-  }
-  return {
-    status: 502,
-    error: "Не удалось получить текст от AI-сервиса. Попробуйте снова.",
-  };
+  return undefined;
 }
 
 // Validate before opening the stream; validation errors retain JSON HTTP status.
@@ -167,15 +194,45 @@ export default async function handler(
     });
 
     if (!upstream.ok) {
-      const failure = upstreamError(upstream.status);
-      await sendData({ error: failure.error, status: failure.status });
+      // Only failed/non-SSE responses are read in full; successful SSE stays incremental.
+      const errorBody = redactKey(await upstream.text(), apiKey);
+      console.log("NVIDIA HTTP error", {
+        status: upstream.status,
+        statusText: redactKey(
+          upstream.statusText || STATUS_CODES[upstream.status] || "",
+          apiKey,
+        ),
+        body: errorBody,
+      });
+      await sendData({
+        error: redactKey(
+          describeProviderError(
+            errorBody,
+            upstream.status,
+            upstream.statusText,
+          ),
+          apiKey,
+        ),
+        status: upstream.status,
+      });
       return;
     }
     if (
       !upstream.body ||
       !upstream.headers.get("content-type")?.includes("text/event-stream")
     ) {
-      throw new Error("AI-сервис не вернул потоковый ответ. Попробуйте снова.");
+      const errorBody = redactKey(await upstream.text(), apiKey);
+      console.log("NVIDIA non-streaming response", {
+        status: upstream.status,
+        contentType: redactKey(
+          upstream.headers.get("content-type") || "",
+          apiKey,
+        ),
+        body: errorBody,
+      });
+      throw new Error(
+        `NVIDIA вернула непотоковый ответ: ${describeProviderError(errorBody, upstream.status, upstream.statusText)}`,
+      );
     }
 
     let hasContent = false;
@@ -192,14 +249,25 @@ export default async function handler(
       try {
         data = JSON.parse(payload);
       } catch {
-        throw new Error(
-          "AI-сервис вернул некорректный поток ответа. Попробуйте снова.",
-        );
+        const errorBody = redactKey(payload, apiKey);
+        console.log("NVIDIA malformed SSE event", {
+          status: upstream.status,
+          body: errorBody,
+        });
+        throw new Error(`NVIDIA вернула некорректное событие: ${errorBody}`);
       }
       if (isRecord(data) && "error" in data) {
-        throw new Error(
-          "Генерация прервалась на стороне AI-сервиса. Попробуйте снова.",
-        );
+        const errorBody = redactKey(payload, apiKey);
+        const status = providerErrorStatus(data);
+        console.log("NVIDIA SSE error", {
+          status: status ?? upstream.status,
+          body: errorBody,
+        });
+        await sendData({
+          error: describeProviderError(errorBody, status),
+          status: status ?? 502,
+        });
+        return;
       }
       const choice =
         isRecord(data) && Array.isArray(data.choices)
@@ -220,12 +288,30 @@ export default async function handler(
       throw new Error("Соединение с AI-сервисом прервалось. Попробуйте снова.");
   } catch (error) {
     if (!disconnected && !response.destroyed) {
+      // Include the failure object/stack in Vercel logs, never request headers.
+      console.log(
+        "NVIDIA generation failed",
+        redactKey(
+          JSON.stringify(
+            error instanceof Error
+              ? {
+                  name: error.name,
+                  message: error.message,
+                  stack: error.stack,
+                  cause: String(error.cause ?? ""),
+                  timedOut,
+                }
+              : { error: String(error), timedOut },
+          ),
+          apiKey,
+        ),
+      );
       const message = timedOut
         ? "Генерация заняла слишком много времени. Полученный текст сохранён; попробуйте снова."
         : error instanceof TypeError
           ? "Не удалось связаться с AI-сервисом. Попробуйте снова."
           : error instanceof Error
-            ? error.message
+            ? redactKey(error.message, apiKey)
             : "Генерация прервалась. Попробуйте снова.";
       await sendData({ error: message, status: timedOut ? 504 : 502 }).catch(
         () => undefined,

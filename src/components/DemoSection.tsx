@@ -247,8 +247,9 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
             {status === "error" && (
               <div role="alert" className="my-auto py-8 text-center">
                 <AlertCircle size={32} className="mx-auto mb-4 text-error" />
-                <h3 className="text-xl">Что-то пошло не так</h3>
-                <p className="mt-3 text-sm text-muted">{generationError}</p>
+                <h3 className="whitespace-pre-wrap break-words text-lg leading-relaxed text-error">
+                  {generationError || "Не удалось сгенерировать текст."}
+                </h3>
                 <button
                   type="button"
                   onClick={() =>

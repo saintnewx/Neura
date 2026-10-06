@@ -11,10 +11,12 @@ import Footer from "../components/Footer";
 import LimitModal from "../components/LimitModal";
 import { useAuth } from "../hooks/useAuth";
 import { useWorkspace } from "../hooks/useWorkspace";
+import { useStageReveal } from "../hooks/useStageReveal";
 
 // Reveal sections once; browser fallback leaves content visible.
 export default function Landing() {
   const pageRef = useRef<HTMLDivElement>(null);
+  useStageReveal(pageRef);
   const { user, loading } = useAuth();
   const workspace = useWorkspace(user, loading);
   useEffect(() => {

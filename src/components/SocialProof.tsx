@@ -1,33 +1,51 @@
 const brands = [
-  "Layers",
-  "Quotient",
-  "Circooles",
-  "Sisyphus",
-  "Catalog",
-  "Polymath",
+  "Google",
+  "Meta",
+  "Notion",
+  "Spotify",
+  "Twitch",
+  "Shopify",
+  "Adobe",
+  "Figma",
+  "Miro",
+  "Samsung",
 ];
 
-// Text-only logos keep the landing image-free.
+// One semantic brand list and a hidden duplicate create a seamless CSS marquee.
 export default function SocialProof() {
   return (
-    <section className="container-page reveal py-12">
-      <div className="border-y border-line/60 py-10">
-        <div className="mb-8 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-5">
-          <p className="eyebrow">Нам доверяют</p>
-          <span className="hidden h-4 w-px bg-line sm:block" />
-          <p className="text-xl font-semibold tracking-tight">2,400+ команд</p>
-        </div>
-        <div className="grid grid-cols-2 items-center gap-x-6 gap-y-7 text-center sm:grid-cols-3 lg:grid-cols-6">
-          {brands.map((brand, index) => (
-            <span
-              key={brand}
-              className={`text-xl font-semibold tracking-tight text-muted opacity-60 ${index === 3 ? "italic" : ""}`}
-            >
-              {brand}
-            </span>
-          ))}
+    <section
+      className="container-page stage-one-reveal py-12 sm:py-16"
+      data-reveal-delay="100"
+      aria-labelledby="social-proof-title"
+    >
+      <div className="brand-marquee-line mb-10" aria-hidden="true" />
+      <p
+        id="social-proof-title"
+        className="mb-8 text-center text-[12px] font-medium uppercase tracking-[0.2em] text-muted"
+      >
+        НАМ ДОВЕРЯЮТ
+      </p>
+      <div className="brand-marquee">
+        <div className="brand-marquee-track">
+          <ul className="brand-marquee-group" aria-label="Компании">
+            {brands.map((brand) => (
+              <li key={brand} className="brand-marquee-logo">
+                {brand}
+              </li>
+            ))}
+          </ul>
+          {/* Assistive technologies encounter each brand exactly once. */}
+          <ul className="brand-marquee-group" aria-hidden="true">
+            {brands.map((brand) => (
+              <li key={brand} className="brand-marquee-logo">
+                {brand}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+      <div className="brand-marquee-line mt-10" aria-hidden="true" />
     </section>
   );
 }

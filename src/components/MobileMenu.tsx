@@ -57,17 +57,17 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Меню навигации"
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg/95 p-6 backdrop-blur-xl"
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#0A0B14]/95 p-6 backdrop-blur-2xl"
     >
       <div className="flex items-center justify-between">
-        <span className="text-xl font-extrabold">
+        <span className="text-[18px] font-bold leading-none tracking-tight">
           Neura<span className="text-accent">.</span>
         </span>
         <button
           type="button"
           onClick={onClose}
           aria-label="Закрыть меню"
-          className="flex h-11 w-11 items-center justify-center rounded-xl border border-line"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.08] text-muted hover:text-accent"
         >
           <X />
         </button>
@@ -86,13 +86,17 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
             key={href}
             href={href}
             onClick={onClose}
-            className="text-4xl font-semibold tracking-tight hover:text-accent"
+            className="text-[32px] font-semibold tracking-tight text-text hover:text-accent"
           >
             {label}
           </a>
         ))}
-        <Link to="/app" onClick={onClose} className="btn-primary mt-4">
-          Попробовать бесплатно
+        <Link
+          to="/app"
+          onClick={onClose}
+          className="stage-one-primary mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-base font-semibold"
+        >
+          Начать бесплатно
         </Link>
       </nav>
       <p className="eyebrow">Больше идей. Меньше рутины.</p>

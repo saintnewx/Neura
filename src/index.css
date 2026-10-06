@@ -10,6 +10,7 @@
   }
   body {
     @apply m-0 bg-bg font-sans text-lg leading-[1.65] text-text antialiased;
+    background-color: #0a0b14;
     font-weight: 510;
   }
   h1,
@@ -468,5 +469,234 @@
   .auth-switch a,
   .auth-switch button {
     transition: none;
+  }
+}
+
+/* Shared Aurora canvas: fixed decoration sits below every route's content. */
+#root {
+  min-height: 100svh;
+  isolation: isolate;
+}
+.app-content {
+  position: relative;
+  z-index: 10;
+  min-height: 100svh;
+}
+.aurora-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --aurora-shift: 0px;
+}
+.aurora-orb {
+  position: fixed;
+  z-index: 0;
+  width: clamp(400px, 44vw, 600px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.17;
+  filter: blur(140px);
+  pointer-events: none;
+  will-change: transform;
+}
+.aurora-orb-one {
+  top: -220px;
+  left: -180px;
+  background: #00e5ff;
+  transform: translate3d(0, calc(var(--aurora-shift) * -1), 0);
+}
+.aurora-orb-two {
+  top: -240px;
+  right: -200px;
+  background: #a259ff;
+  transform: translate3d(0, calc(var(--aurora-shift) * 0.8), 0);
+}
+.aurora-orb-three {
+  bottom: -300px;
+  left: -200px;
+  background: #a259ff;
+  transform: translate3d(0, calc(var(--aurora-shift) * -0.8), 0);
+}
+.aurora-orb-four {
+  top: 40%;
+  right: -280px;
+  background: #00e5ff;
+  transform: translate3d(0, var(--aurora-shift), 0);
+}
+.aurora-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02) 0,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 96px
+  );
+  background-position: center;
+}
+/* Existing route-specific decorative backdrops yield to the shared canvas. */
+.app-content > .hero-glow,
+.app-content .auth-page {
+  background: transparent;
+}
+.app-content .auth-orb {
+  display: none;
+}
+
+/* Stage-one surfaces and typography leave the remaining section tokens intact. */
+.stage-one-title {
+  font-size: clamp(48px, 8vw, 112px);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+.stage-one-primary,
+.stage-one-secondary {
+  transition:
+    transform 150ms ease-out,
+    opacity 150ms ease-out;
+}
+.stage-one-primary {
+  background: linear-gradient(110deg, #00e5ff, #a259ff);
+  color: #0a0b14;
+}
+.stage-one-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.24);
+}
+.stage-one-secondary:hover {
+  transform: scale(1.02);
+  border-color: rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.08);
+}
+.studio-card {
+  background: rgba(19, 22, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 32px 100px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+.studio-glow {
+  background: radial-gradient(ellipse, rgba(0, 229, 255, 0.2), transparent 70%);
+}
+.studio-cursor {
+  animation: blink 1s step-end infinite;
+}
+
+/* New sections reveal once with a short stagger; existing .reveal stays unchanged. */
+.stage-one-reveal {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 600ms ease-out,
+    transform 600ms ease-out;
+  transition-delay: var(--stage-one-delay, 0ms);
+}
+.stage-one-pending {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.stage-one-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Two equal-width brand groups make a continuous 30-second marquee. */
+.brand-marquee-line {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent
+  );
+}
+.brand-marquee {
+  overflow: hidden;
+  padding: 8px 0;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+}
+.brand-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: neura-marquee 30s linear infinite;
+}
+.brand-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 64px;
+  padding: 0 32px;
+}
+.brand-marquee-logo {
+  color: #8b90b0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.brand-marquee:hover .brand-marquee-track,
+.brand-marquee:focus-within .brand-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes neura-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Motion preferences also cover parallax and continuously moving previews. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-orb {
+    transform: none;
+    will-change: auto;
+  }
+  .stage-one-reveal,
+  .stage-one-pending {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .stage-one-primary,
+  .stage-one-secondary,
+  .studio-cursor {
+    transition: none;
+    animation: none;
+  }
+  .stage-one-primary:hover,
+  .stage-one-secondary:hover {
+    transform: none;
+  }
+  .brand-marquee-track {
+    animation: none;
+  }
+  .brand-marquee {
+    overflow-x: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .brand-marquee-group[aria-hidden="true"] {
+    display: none;
   }
 }

@@ -283,6 +283,34 @@ export function useWorkspace(user: User | null, authLoading: boolean) {
     return { ...data, type: data.type as ContentType } as GenerationRecord;
   }, []);
 
+  // The server reserves exactly one slot; reread profiles without incrementing twice.
+  const refreshUsage = useCallback(async () => {
+    if (!user || !supabase || !current()) return;
+    try {
+      const { data, error } = await supabase.rpc("get_daily_usage");
+      if (error) throw error;
+      if (!data?.[0]) throw new Error("Сервер не вернул дневной лимит.");
+      if (!current()) return;
+      const usage = data[0];
+      setState((value) => ({
+        ...value,
+        usage:
+          value.usage.reset_date === usage.reset_date &&
+          value.usage.used > usage.used
+            ? value.usage
+            : usage,
+      }));
+    } catch (error) {
+      if (current())
+        setState((value) => ({
+          ...value,
+          error:
+            value.error ||
+            `История сохранена, но не удалось обновить счётчик: ${message(error)}`,
+        }));
+    }
+  }, [user, current]);
+
   // Preserve the generated text even if Supabase or localStorage is temporarily down.
   const saveGeneration = useCallback(
     async (input: GenerationInput): Promise<void> => {
@@ -336,6 +364,7 @@ export function useWorkspace(user: User | null, authLoading: boolean) {
             error: pending.length ? value.error : "",
           };
         });
+        await refreshUsage();
       } catch (error) {
         if (current())
           setState((value) => ({
@@ -344,7 +373,7 @@ export function useWorkspace(user: User | null, authLoading: boolean) {
           }));
       }
     },
-    [current, user, owner, persistCloud],
+    [current, user, owner, persistCloud, refreshUsage],
   );
 
   const retrySave = useCallback(async () => {
@@ -378,6 +407,7 @@ export function useWorkspace(user: User | null, authLoading: boolean) {
           };
         });
       }
+      await refreshUsage();
     } catch (error) {
       if (current())
         setState((value) => ({
@@ -387,7 +417,7 @@ export function useWorkspace(user: User | null, authLoading: boolean) {
     } finally {
       if (current()) setSaving(false);
     }
-  }, [current, owner, user, saving, persistCloud]);
+  }, [current, owner, user, saving, persistCloud, refreshUsage]);
 
   const visible =
     state.owner === owner

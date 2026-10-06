@@ -28,17 +28,7 @@ export default function AppPage() {
   const [generatorBusy, setGeneratorBusy] = useState(false);
   const account = user?.id ?? "guest";
   const email = user?.email || "Ваш аккаунт";
-  const name =
-    typeof user?.user_metadata.full_name === "string"
-      ? user.user_metadata.full_name
-      : email;
-  const initials = name
-    .split(/[\s@._-]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
+  const initial = user?.email?.charAt(0).toUpperCase() || "N";
 
   // Restored content cannot carry over to a different authenticated account.
   useEffect(() => {
@@ -90,22 +80,22 @@ export default function AppPage() {
               Проверяем вход…
             </span>
           ) : user ? (
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 max-w-full items-center gap-3">
               <span
                 title={email}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-xs text-accent"
                 aria-label={`Аккаунт: ${email}`}
               >
-                {initials || "N"}
+                {initial}
               </span>
-              <span className="hidden max-w-44 truncate text-sm text-muted md:inline">
+              <span className="min-w-0 max-w-36 truncate text-sm text-muted sm:max-w-56">
                 {email}
               </span>
               <button
                 type="button"
                 onClick={() => void handleSignOut()}
                 disabled={signingOut}
-                className="btn-secondary min-h-10 px-3 py-2 text-sm"
+                className="btn-secondary min-h-10 shrink-0 px-3 py-2 text-sm"
               >
                 <LogOut size={16} />
                 {signingOut ? "Выходим…" : "Выйти"}

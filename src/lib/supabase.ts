@@ -23,6 +23,7 @@ function createSupabaseClient(): SupabaseClient<Database> | null {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
+        // The SDK reads the Google callback and persists it before getSession resolves.
         detectSessionInUrl: true,
       },
     });

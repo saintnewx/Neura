@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import Landing from "./pages/Landing";
 import AppPage from "./pages/AppPage";
 import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/AuthPage";
 
 // Restore scroll position and support section links across routes.
 function RouteEffects() {
@@ -27,6 +28,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/app" element={<AppPage />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

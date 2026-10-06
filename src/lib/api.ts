@@ -1,8 +1,16 @@
 import { readSseData } from "./sse";
+import { GenerationLimitError, isDailyUsage } from "./usage";
+import type { DailyUsage } from "./usage";
 
 // Supported formats are shared by both generator interfaces.
 export const contentTypes = ["Пост", "Email", "Реклама", "Reels"] as const;
 export type ContentType = (typeof contentTypes)[number];
+
+export interface GenerateOptions {
+  accessToken?: string;
+  tone?: string;
+  onUsage?: (usage: DailyUsage) => void;
+}
 
 // Only the same-origin server endpoint has access to the NVIDIA API key.
 export async function generateContent(
@@ -10,6 +18,7 @@ export async function generateContent(
   type: string,
   onContent?: (content: string) => void,
   signal?: AbortSignal,
+  options: GenerateOptions = {},
 ): Promise<string> {
   let response: Response;
   try {
@@ -18,8 +27,11 @@ export async function generateContent(
       headers: {
         "Content-Type": "application/json",
         Accept: "text/event-stream",
+        ...(options.accessToken
+          ? { Authorization: `Bearer ${options.accessToken}` }
+          : {}),
       },
-      body: JSON.stringify({ task, type }),
+      body: JSON.stringify({ task, type, tone: options.tone || "Нейтральный" }),
       signal: signal
         ? AbortSignal.any([signal, AbortSignal.timeout(65_000)])
         : AbortSignal.timeout(65_000),
@@ -35,6 +47,14 @@ export async function generateContent(
 
   if (!response.ok) {
     const data: unknown = await response.json().catch(() => null);
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "usage" in data &&
+      isDailyUsage(data.usage)
+    ) {
+      options.onUsage?.(data.usage);
+    }
     const message =
       typeof data === "object" &&
       data !== null &&
@@ -43,6 +63,17 @@ export async function generateContent(
       data.error.trim()
         ? data.error
         : "Не удалось сгенерировать текст. Попробуйте снова.";
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "code" in data &&
+      data.code === "DAILY_LIMIT_REACHED"
+    ) {
+      throw new GenerationLimitError(
+        message,
+        "usage" in data && isDailyUsage(data.usage) ? data.usage : undefined,
+      );
+    }
     throw new Error(message);
   }
   if (
@@ -75,6 +106,8 @@ export async function generateContent(
       }
       if ("error" in data && typeof data.error === "string")
         throw new Error(data.error);
+      if ("usage" in data && isDailyUsage(data.usage))
+        options.onUsage?.(data.usage);
       if ("content" in data && typeof data.content === "string") {
         content += data.content;
         onContent?.(content);

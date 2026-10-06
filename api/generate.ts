@@ -2,6 +2,8 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { once } from "node:events";
 import { STATUS_CODES } from "node:http";
 import { readSseData } from "../src/lib/sse.js";
+import { authorizeGeneration, QuotaError } from "../server/supabase.js";
+import type { DailyUsage } from "../src/lib/usage.js";
 
 // vercel.json also sets this duration for the standalone Node.js Function.
 export const maxDuration = 60;
@@ -87,6 +89,7 @@ export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
 ): Promise<void> {
+  const startedAt = Date.now();
   response.setHeader("Cache-Control", "no-store");
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -110,7 +113,9 @@ export default async function handler(
     !body.task.trim() ||
     body.task.length > 2000 ||
     typeof body.type !== "string" ||
-    !CONTENT_TYPES.has(body.type)
+    !CONTENT_TYPES.has(body.type) ||
+    (body.tone !== undefined &&
+      (typeof body.tone !== "string" || body.tone.length > 120))
   ) {
     response.status(400).json({
       error:
@@ -127,13 +132,38 @@ export default async function handler(
     return;
   }
 
+  // Logged-in requests reserve quota atomically before any NVIDIA work begins.
+  let usage: DailyUsage | null;
+  try {
+    usage = await authorizeGeneration(request.headers.authorization);
+  } catch (error) {
+    if (error instanceof QuotaError) {
+      response
+        .status(error.status)
+        .json({ error: error.message, code: error.code, usage: error.usage });
+    } else {
+      console.log("Supabase quota request failed", {
+        message: error instanceof Error ? error.message : "Unknown failure",
+      });
+      response
+        .status(503)
+        .json({
+          error: "Не удалось проверить дневной лимит. Попробуйте снова.",
+        });
+    }
+    return;
+  }
+
   const controller = new AbortController();
   let timedOut = false;
   let disconnected = false;
-  const timeout = setTimeout(() => {
-    timedOut = true;
-    controller.abort();
-  }, UPSTREAM_TIMEOUT_MS);
+  const timeout = setTimeout(
+    () => {
+      timedOut = true;
+      controller.abort();
+    },
+    Math.max(1, UPSTREAM_TIMEOUT_MS - (Date.now() - startedAt)),
+  );
   const onClose = () => {
     if (!response.writableEnded) {
       disconnected = true;
@@ -154,6 +184,7 @@ export default async function handler(
     content?: string;
     error?: string;
     status?: number;
+    usage?: DailyUsage;
   }): Promise<void> {
     await writeFrame(`data: ${JSON.stringify(data)}\n\n`);
   }
@@ -170,6 +201,7 @@ export default async function handler(
 
   try {
     await writeFrame(": connected\n\n");
+    if (usage) await sendData({ usage });
     const upstream = await fetch(NVIDIA_ENDPOINT, {
       method: "POST",
       headers: {
@@ -183,7 +215,7 @@ export default async function handler(
           { role: "system", content: SYSTEM_PROMPT },
           {
             role: "user",
-            content: `Тип контента: ${body.type}\nЗадача: ${body.task.trim()}`,
+            content: `Тип контента: ${body.type}\nТон: ${typeof body.tone === "string" && body.tone.trim() ? body.tone.trim() : "Нейтральный"}\nЗадача: ${body.task.trim()}`,
           },
         ],
         temperature: 0.8,

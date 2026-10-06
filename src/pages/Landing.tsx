@@ -8,10 +8,15 @@ import Pricing from "../components/Pricing";
 import Testimonials from "../components/Testimonials";
 import FAQ from "../components/FAQ";
 import Footer from "../components/Footer";
+import LimitModal from "../components/LimitModal";
+import { useAuth } from "../hooks/useAuth";
+import { useWorkspace } from "../hooks/useWorkspace";
 
 // Reveal sections once; browser fallback leaves content visible.
 export default function Landing() {
   const pageRef = useRef<HTMLDivElement>(null);
+  const { user, loading } = useAuth();
+  const workspace = useWorkspace(user, loading);
   useEffect(() => {
     if (
       !("IntersectionObserver" in window) ||
@@ -51,12 +56,35 @@ export default function Landing() {
         <Hero />
         <SocialProof />
         <BentoGrid />
-        <DemoSection />
+        <DemoSection
+          key={user?.id ?? "guest"}
+          disabled={loading || workspace.historyLoading}
+          onBeforeGenerate={workspace.beforeGenerate}
+          onGenerated={workspace.saveGeneration}
+          onUsage={workspace.updateUsage}
+          onLimitReached={workspace.openLimit}
+        />
+        {workspace.historyError && (
+          <div role="alert" className="container-page mt-4 text-sm text-error">
+            <p>{workspace.historyError}</p>
+            {!!workspace.pendingCount && (
+              <button
+                type="button"
+                onClick={() => void workspace.retrySave()}
+                disabled={workspace.saving}
+                className="btn-secondary mt-3 min-h-10 px-4 py-2 text-sm"
+              >
+                {workspace.saving ? "Сохраняем…" : "Повторить сохранение"}
+              </button>
+            )}
+          </div>
+        )}
         <Pricing />
         <Testimonials />
         <FAQ />
       </main>
       <Footer />
+      <LimitModal open={workspace.limitOpen} onClose={workspace.closeLimit} />
     </div>
   );
 }

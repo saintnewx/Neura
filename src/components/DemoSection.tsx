@@ -11,22 +11,46 @@ import {
 } from "lucide-react";
 import { contentTypes, generateContent } from "../lib/api";
 import type { ContentType } from "../lib/api";
+import type { GenerationInput, GenerationRecord } from "../lib/history";
+import { GenerationLimitError } from "../lib/usage";
+import type { DailyUsage } from "../lib/usage";
 import Skeleton from "./Skeleton";
 import Toast from "./Toast";
 
 interface DemoSectionProps {
   variant?: "landing" | "workspace";
+  disabled?: boolean;
+  onBeforeGenerate?: () => Promise<{ accessToken?: string } | null>;
+  onGenerated?: (input: GenerationInput) => Promise<void> | void;
+  onUsage?: (usage: DailyUsage) => void;
+  onLimitReached?: () => void;
+  selectedGeneration?: GenerationRecord | null;
+  onBusyChange?: (busy: boolean) => void;
 }
 interface GenerationRequest {
   task: string;
   type: ContentType;
+  tone: string;
 }
 type GenerationStatus = "idle" | "loading" | "success" | "error";
 
 // Both routes share validation, result, retry, and clipboard behavior.
-export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
+export default function DemoSection({
+  variant = "landing",
+  disabled = false,
+  onBeforeGenerate,
+  onGenerated,
+  onUsage,
+  onLimitReached,
+  selectedGeneration,
+  onBusyChange,
+}: DemoSectionProps) {
   const [task, setTask] = useState("");
   const [type, setType] = useState<ContentType>("Пост");
+  const [tone, setTone] = useState("Нейтральный");
+  const [admitting, setAdmitting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [status, setStatus] = useState<GenerationStatus>("idle");
   const [result, setResult] = useState("");
   const [generationError, setGenerationError] = useState("");
@@ -39,7 +63,12 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
   const abortController = useRef<AbortController | null>(null);
   const fieldId = useId();
   const isLoading = status === "loading";
+  const controlsDisabled = disabled || isLoading || admitting || saving;
   const closeToast = useCallback(() => setToastOpen(false), []);
+
+  useEffect(() => {
+    onBusyChange?.(isLoading || admitting || saving);
+  }, [isLoading, admitting, saving, onBusyChange]);
 
   // Invalidate pending work if the route is unmounted.
   useEffect(
@@ -50,19 +79,44 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
     [],
   );
 
-  async function generate(
-    request: GenerationRequest = { task: task.trim(), type },
-  ) {
-    if (!request.task.trim() || busy.current) return;
-    busy.current = true;
-    const currentId = ++requestId.current;
-    lastRequest.current = request;
-    setStatus("loading");
-    setResult("");
+  // Opening history restores content without overwriting an active stream.
+  useEffect(() => {
+    if (!selectedGeneration || busy.current) return;
+    const restored = selectedGeneration;
+    setTask(restored.task);
+    setType(restored.type);
+    setTone(restored.tone);
+    setResult(restored.result);
+    setStatus("success");
     setGenerationError("");
     setCopyError("");
+    setSaveError("");
+    lastRequest.current = {
+      task: restored.task,
+      type: restored.type,
+      tone: restored.tone,
+    };
+  }, [selectedGeneration]);
+
+  async function generate(
+    request: GenerationRequest = { task: task.trim(), type, tone },
+  ) {
+    if (!request.task.trim() || busy.current || disabled) return;
+    busy.current = true;
+    const currentId = ++requestId.current;
+    const previous = { status, result, generationError };
+    setAdmitting(true);
     abortController.current = new AbortController();
     try {
+      const admission = onBeforeGenerate ? await onBeforeGenerate() : {};
+      if (currentId !== requestId.current || admission === null) return;
+      lastRequest.current = request;
+      setAdmitting(false);
+      setStatus("loading");
+      setResult("");
+      setGenerationError("");
+      setCopyError("");
+      setSaveError("");
       const text = await generateContent(
         request.task,
         request.type,
@@ -70,12 +124,31 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
           if (currentId === requestId.current) setResult(content);
         },
         abortController.current.signal,
+        { ...admission, tone: request.tone, onUsage },
       );
       if (currentId !== requestId.current) return;
       setResult(text);
       setStatus("success");
+      if (onGenerated) {
+        setSaving(true);
+        try {
+          await onGenerated({ ...request, result: text });
+        } catch (error) {
+          if (currentId === requestId.current)
+            setSaveError(
+              `Текст готов, но история не сохранена: ${error instanceof Error ? error.message : "Попробуйте снова."}`,
+            );
+        }
+      }
     } catch (error) {
       if (currentId === requestId.current) {
+        if (error instanceof GenerationLimitError) {
+          setResult(previous.result);
+          setStatus(previous.status);
+          setGenerationError(previous.generationError);
+          onLimitReached?.();
+          return;
+        }
         setGenerationError(
           error instanceof Error
             ? error.message
@@ -87,6 +160,8 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
       if (currentId === requestId.current) {
         busy.current = false;
         abortController.current = null;
+        setAdmitting(false);
+        setSaving(false);
       }
     }
   }
@@ -151,7 +226,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
               id={`${fieldId}-task`}
               value={task}
               onChange={(event) => setTask(event.target.value)}
-              disabled={isLoading}
+              disabled={controlsDisabled}
               placeholder="Например: напиши дружелюбный пост о новом осеннем меню кофейни…"
               rows={5}
               maxLength={2000}
@@ -173,7 +248,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                 id={`${fieldId}-type`}
                 value={type}
                 onChange={(event) => setType(event.target.value as ContentType)}
-                disabled={isLoading}
+                disabled={controlsDisabled}
                 className="field appearance-none pr-12 disabled:opacity-60"
               >
                 {contentTypes.map((item) => (
@@ -188,17 +263,49 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                 className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted"
               />
             </div>
+            <label
+              htmlFor={`${fieldId}-tone`}
+              className="mb-3 mt-6 block text-sm font-[510]"
+            >
+              Тон текста
+            </label>
+            <div className="relative">
+              <select
+                id={`${fieldId}-tone`}
+                value={tone}
+                onChange={(event) => setTone(event.target.value)}
+                disabled={controlsDisabled}
+                className="field appearance-none pr-12 disabled:opacity-60"
+              >
+                {["Нейтральный", "Дружелюбный", "Деловой", "Энергичный"].map(
+                  (item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ),
+                )}
+              </select>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted"
+              />
+            </div>
             <button
               type="submit"
-              disabled={!task.trim() || isLoading}
+              disabled={!task.trim() || controlsDisabled}
               className="btn-primary mt-7 w-full"
             >
               <Sparkles size={18} />
-              {isLoading ? "Генерируем…" : "Сгенерировать"}
+              {admitting
+                ? "Проверяем лимит…"
+                : isLoading
+                  ? "Генерируем…"
+                  : "Сгенерировать"}
             </button>
             <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted">
               <Check size={12} />
-              Без регистрации и банковской карты
+              Посты, письма, реклама и сценарии Reels
             </p>
           </form>
           {/* Empty, loading, error, and success result states. */}
@@ -208,7 +315,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
           >
             <div className="mb-6 flex items-center justify-between gap-3 border-b border-line/60 pb-5">
               <div className="flex items-center gap-3">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-2/10 text-xs font-semibold text-accent-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/10 text-xs font-semibold text-accent">
                   02
                 </span>
                 <p className="text-base font-semibold">Ваш результат</p>
@@ -256,6 +363,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                     void generate(lastRequest.current ?? undefined)
                   }
                   className="btn-secondary mt-6"
+                  disabled={controlsDisabled}
                 >
                   <RefreshCw size={16} />
                   Попробовать снова
@@ -269,6 +377,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                     type="button"
                     onClick={() => void copyResult()}
                     className="btn-secondary min-h-10 px-4 py-2.5 text-sm"
+                    disabled={controlsDisabled}
                   >
                     <Copy size={16} />
                     Копировать
@@ -279,6 +388,7 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                       void generate(lastRequest.current ?? undefined)
                     }
                     className="btn-secondary min-h-10 px-4 py-2.5 text-sm"
+                    disabled={controlsDisabled}
                   >
                     <RefreshCw size={16} />
                     Перегенерировать
@@ -287,6 +397,16 @@ export default function DemoSection({ variant = "landing" }: DemoSectionProps) {
                 {copyError && (
                   <p role="alert" className="mt-3 text-sm text-error">
                     {copyError}
+                  </p>
+                )}
+                {saving && (
+                  <p role="status" className="mt-3 text-sm text-muted">
+                    Сохраняем историю…
+                  </p>
+                )}
+                {saveError && (
+                  <p role="alert" className="mt-3 text-sm text-error">
+                    {saveError}
                   </p>
                 )}
               </>

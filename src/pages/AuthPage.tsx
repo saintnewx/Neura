@@ -1,21 +1,23 @@
+import { Component, useEffect, useRef, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { Auth } from "@supabase/auth-ui-react";
-import { ArrowLeft, Cloud, KeyRound, LoaderCircle } from "lucide-react";
+import { ArrowLeft, LoaderCircle } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
 
-// Neura tokens keep the hosted Auth UI aligned with DESIGN.md.
+// Auth UI requires appearance.theme.dark when theme="dark", even with variables.
 const authTheme = {
   colors: {
     brand: "#00E5FF",
     brandAccent: "#00E5FF",
     brandButtonText: "#0B0D17",
-    defaultButtonBackground: "#13162A",
-    defaultButtonBackgroundHover: "#13162A",
-    defaultButtonBorder: "#2A3050",
+    defaultButtonBackground: "rgba(255,255,255,0.04)",
+    defaultButtonBackgroundHover: "rgba(255,255,255,0.06)",
+    defaultButtonBorder: "rgba(255,255,255,0.1)",
     defaultButtonText: "#E6E9F5",
     dividerBackground: "#2A3050",
-    inputBackground: "#0B0D17",
+    inputBackground: "#13162A",
     inputBorder: "#2A3050",
     inputBorderHover: "#00E5FF",
     inputBorderFocus: "#00E5FF",
@@ -25,11 +27,11 @@ const authTheme = {
     anchorTextColor: "#00E5FF",
     anchorTextHoverColor: "#00E5FF",
     messageText: "#E6E9F5",
-    messageBackground: "#13162A",
-    messageBorder: "#2A3050",
-    messageTextDanger: "#E6E9F5",
-    messageBackgroundDanger: "#13162A",
-    messageBorderDanger: "#2A3050",
+    messageBackground: "transparent",
+    messageBorder: "transparent",
+    messageTextDanger: "#FF6B6B",
+    messageBackgroundDanger: "transparent",
+    messageBorderDanger: "transparent",
   },
   fonts: {
     bodyFontFamily: "Inter, system-ui, sans-serif",
@@ -38,10 +40,10 @@ const authTheme = {
     labelFontFamily: "Inter, system-ui, sans-serif",
   },
   fontSizes: {
-    baseBodySize: "18px",
+    baseBodySize: "15px",
     baseInputSize: "16px",
-    baseLabelSize: "14px",
-    baseButtonSize: "16px",
+    baseLabelSize: "13px",
+    baseButtonSize: "15px",
   },
   radii: { borderRadiusButton: "12px", inputBorderRadius: "12px" },
   borderWidths: { buttonBorderWidth: "1px", inputBorderWidth: "1px" },
@@ -52,168 +54,352 @@ const authTheme = {
     labelBottomMargin: "8px",
     anchorBottomMargin: "4px",
     emailInputSpacing: "8px",
-    socialAuthSpacing: "8px",
-    inputPadding: "14px 16px",
-    buttonPadding: "14px 16px",
+    socialAuthSpacing: "0px",
+    inputPadding: "12px 14px",
+    buttonPadding: "12px 16px",
   },
 };
 
 const authAppearance = {
+  theme: { default: authTheme, dark: authTheme },
   variables: { default: authTheme, dark: authTheme },
   style: {
     button: {
+      height: "48px",
+      minHeight: "48px",
       fontWeight: 590,
+      backdropFilter: "blur(12px)",
       transition: "transform 150ms ease-out, opacity 150ms ease-out",
     },
-    input: {
-      fontWeight: 510,
-      transition: "transform 150ms ease-out, opacity 150ms ease-out",
-    },
-    anchor: {
-      fontWeight: 510,
-      transition: "opacity 150ms ease-out",
-    },
-    label: { fontWeight: 510 },
-    message: { fontWeight: 510, overflowWrap: "anywhere" as const },
-  },
-};
-
-// Email/password and Google share Supabase's validated forms and confirmations.
-const authLocalization = {
-  variables: {
-    sign_in: {
-      email_label: "Email",
-      password_label: "Пароль",
-      email_input_placeholder: "you@company.com",
-      password_input_placeholder: "Ваш пароль",
-      button_label: "Войти",
-      loading_button_label: "Входим…",
-      social_provider_text: "Продолжить с {{provider}}",
-      link_text: "Уже есть аккаунт? Войти",
-    },
-    sign_up: {
-      email_label: "Email",
-      password_label: "Пароль",
-      email_input_placeholder: "you@company.com",
-      password_input_placeholder: "Придумайте пароль",
-      button_label: "Создать аккаунт",
-      loading_button_label: "Создаём аккаунт…",
-      social_provider_text: "Продолжить с {{provider}}",
-      link_text: "Нет аккаунта? Зарегистрироваться",
-      confirmation_text:
-        "Проверьте почту: мы отправили ссылку для подтверждения.",
-    },
-    forgotten_password: {
-      email_label: "Email",
-      email_input_placeholder: "you@company.com",
-      button_label: "Отправить ссылку",
-      loading_button_label: "Отправляем…",
-      link_text: "Забыли пароль?",
-      confirmation_text:
-        "Проверьте почту: мы отправили ссылку для смены пароля.",
-    },
-    update_password: {
-      password_label: "Новый пароль",
-      password_input_placeholder: "Введите новый пароль",
-      button_label: "Сохранить пароль",
-      loading_button_label: "Сохраняем…",
-      confirmation_text: "Пароль обновлён.",
+    container: { margin: "0", gap: "0" },
+    message: {
+      fontSize: "13px",
+      lineHeight: "1.5",
+      padding: "8px 0",
+      overflowWrap: "anywhere" as const,
     },
   },
 };
 
-// /auth remains useful before credentials are configured and after OAuth returns.
+// The card and a working back link remain visible if an auth widget fails to render.
+class AuthPanelBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error: Error) {
+    console.error("Neura auth UI failed:", error.message);
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
+function UnavailableAuth() {
+  return (
+    <div className="auth-notice" role="status">
+      <p>Авторизация временно недоступна, работаем в гостевом режиме</p>
+      <Link to="/app" className="auth-button mt-5">
+        <ArrowLeft size={16} aria-hidden="true" />
+        Назад
+      </Link>
+    </div>
+  );
+}
+
+interface FieldErrors {
+  email?: string;
+  password?: string;
+}
+
+// Glass auth page shares the existing Supabase session and NVIDIA workspace.
 export default function AuthPage() {
   const { user, loading, authError } = useAuth();
+  const [registering, setRegistering] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState("");
+  const [confirmation, setConfirmation] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const active = useRef(true);
+  const busy = useRef(false);
+
+  useEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
+
+  function switchView() {
+    if (busy.current) return;
+    setRegistering((value) => !value);
+    setFieldErrors({});
+    setFormError("");
+    setConfirmation("");
+    setPassword("");
+  }
+
+  // Validate fields locally; Supabase remains responsible for credentials and sessions.
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const client = supabase;
+    if (!client || busy.current) return;
+    const nextErrors: FieldErrors = {};
+    const normalizedEmail = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail))
+      nextErrors.email = "Введите корректный email.";
+    if (!password) nextErrors.password = "Введите пароль.";
+    else if (registering && password.length < 6)
+      nextErrors.password = "Пароль должен содержать минимум 6 символов.";
+    setFieldErrors(nextErrors);
+    setFormError("");
+    setConfirmation("");
+    if (Object.keys(nextErrors).length) return;
+    busy.current = true;
+    setSubmitting(true);
+    try {
+      const { data, error } = registering
+        ? await client.auth.signUp({
+            email: normalizedEmail,
+            password,
+            options: { emailRedirectTo: `${window.location.origin}/app` },
+          })
+        : await client.auth.signInWithPassword({
+            email: normalizedEmail,
+            password,
+          });
+      if (!active.current) return;
+      if (error) {
+        if (
+          error.code === "invalid_credentials" ||
+          error.code === "invalid_login_credentials"
+        )
+          setFormError("Неверный email или пароль.");
+        else if (error.code === "email_not_confirmed")
+          setFieldErrors({ email: "Подтвердите email по ссылке из письма." });
+        else if (error.code === "user_already_exists")
+          setFieldErrors({
+            email: "Этот email уже зарегистрирован. Войдите в аккаунт.",
+          });
+        else if (error.code === "weak_password")
+          setFieldErrors({ password: error.message });
+        else setFormError(error.message);
+      } else if (registering && !data.session) {
+        setConfirmation(
+          "Проверьте почту: мы отправили ссылку для подтверждения аккаунта.",
+        );
+        setPassword("");
+      }
+    } catch (error) {
+      if (active.current)
+        setFormError(
+          error instanceof Error
+            ? error.message
+            : "Не удалось связаться с сервисом. Попробуйте снова.",
+        );
+    } finally {
+      busy.current = false;
+      if (active.current) setSubmitting(false);
+    }
+  }
+
   if (user) return <Navigate to="/app" replace />;
 
   return (
-    <div className="hero-glow min-h-screen">
-      <header className="border-b border-line/50">
-        <div className="container-page flex h-20 items-center justify-between">
-          <Link
-            to="/app"
-            className="inline-flex items-center gap-2 text-sm font-[510] text-muted transition-opacity duration-150 ease-out hover:text-accent"
-          >
-            <ArrowLeft size={18} aria-hidden="true" />К генератору
-          </Link>
-          <Link to="/" className="text-xl font-[590] tracking-tight">
-            Neura<span className="text-accent">.</span>
-          </Link>
-        </div>
-      </header>
-
-      <main className="container-page flex justify-center py-16 sm:py-24">
+    <div className="auth-page">
+      {/* Three fixed blurred gradients sit behind the interactive card. */}
+      <div aria-hidden="true" className="auth-orb auth-orb-one" />
+      <div aria-hidden="true" className="auth-orb auth-orb-two" />
+      <div aria-hidden="true" className="auth-orb auth-orb-three" />
+      <Link to="/app" className="auth-back">
+        <ArrowLeft size={18} aria-hidden="true" />
+        Назад
+      </Link>
+      <main className="auth-main">
         <section
-          className="glass-strong w-full max-w-[480px] rounded-2xl border border-line p-6 sm:p-10"
+          className="glass-strong auth-card"
           aria-labelledby="auth-title"
         >
-          <div className="mb-8">
-            <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-accent/20 bg-accent/10 text-accent">
-              <KeyRound size={22} aria-hidden="true" />
-            </div>
-            <h1
-              id="auth-title"
-              className="text-3xl font-[590] leading-tight tracking-tight sm:text-4xl"
+          <Link to="/" className="auth-logo">
+            Neura<span className="text-accent">.</span>
+          </Link>
+          <h1 id="auth-title" className="auth-heading">
+            {registering ? "Создайте аккаунт" : "Войдите в Neura"}
+          </h1>
+          <p className="auth-subtitle">
+            Сохраняйте историю на всех устройствах
+          </p>
+          {!supabase ? (
+            <UnavailableAuth />
+          ) : loading ? (
+            <p
+              role="status"
+              className="auth-notice flex items-center justify-center gap-2"
             >
-              Ваши идеи — всегда рядом.
-            </h1>
-            <p className="mt-4 text-lg font-[510] leading-relaxed text-muted">
-              Войдите, чтобы сохранять историю на всех устройствах и получать 20
-              генераций в день.
-            </p>
-          </div>
-
-          {loading ? (
-            <p role="status" className="flex items-center gap-3 text-muted">
-              <LoaderCircle size={18} aria-hidden="true" />
+              <LoaderCircle
+                size={18}
+                className="auth-spinner"
+                aria-hidden="true"
+              />
               Проверяем вход…
             </p>
-          ) : supabase ? (
-            <>
-              {authError && (
-                <p
-                  role="alert"
-                  className="mb-5 break-words rounded-xl border border-line bg-bg/70 p-4 text-sm text-text"
-                >
-                  {authError}
-                </p>
-              )}
-              <Auth
-                supabaseClient={supabase}
-                providers={["google"]}
-                appearance={authAppearance}
-                localization={authLocalization}
-                theme="dark"
-                redirectTo={`${window.location.origin}/app`}
-                showLinks
-              />
-            </>
           ) : (
-            <div
-              role="status"
-              className="rounded-xl border border-line bg-bg/60 p-5"
-            >
-              <p className="font-[590]">Вход пока не настроен</p>
-              <p className="mt-2 text-sm text-muted">
-                Добавьте VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в окружение
-                Vercel и повторно разверните проект. Генератор доступен без
-                входа.
-              </p>
-              <Link to="/app" className="btn-primary mt-5 w-full">
-                Продолжить без входа
-              </Link>
-            </div>
+            <AuthPanelBoundary fallback={<UnavailableAuth />}>
+              {/* Auth UI provides the Google icon and its OAuth flow; theme is explicit. */}
+              <fieldset className="auth-social" disabled={submitting}>
+                <Auth
+                  supabaseClient={supabase}
+                  theme="dark"
+                  appearance={authAppearance}
+                  providers={["google"]}
+                  onlyThirdPartyProviders
+                  showLinks={false}
+                  redirectTo={`${window.location.origin}/app`}
+                  localization={{
+                    variables: {
+                      sign_in: {
+                        social_provider_text: "Продолжить с {{provider}}",
+                      },
+                      sign_up: {
+                        social_provider_text: "Продолжить с {{provider}}",
+                      },
+                    },
+                  }}
+                />
+              </fieldset>
+              <div className="auth-divider" aria-hidden="true">
+                <span>или</span>
+              </div>
+              <form
+                className="auth-form"
+                onSubmit={(event) => void submit(event)}
+                noValidate
+              >
+                <div>
+                  <label htmlFor="auth-email" className="auth-label">
+                    Email
+                  </label>
+                  <input
+                    id="auth-email"
+                    className="auth-input"
+                    type="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    placeholder="you@company.com"
+                    value={email}
+                    disabled={submitting}
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      setFieldErrors((errors) => ({
+                        ...errors,
+                        email: undefined,
+                      }));
+                      setFormError("");
+                    }}
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={
+                      fieldErrors.email ? "auth-email-error" : undefined
+                    }
+                    required
+                  />
+                  {fieldErrors.email && (
+                    <p
+                      id="auth-email-error"
+                      role="alert"
+                      className="auth-field-error"
+                    >
+                      {fieldErrors.email}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="auth-password" className="auth-label">
+                    Пароль
+                  </label>
+                  <input
+                    id="auth-password"
+                    className="auth-input"
+                    type="password"
+                    autoComplete={
+                      registering ? "new-password" : "current-password"
+                    }
+                    placeholder={
+                      registering ? "Минимум 6 символов" : "Ваш пароль"
+                    }
+                    value={password}
+                    disabled={submitting}
+                    onChange={(event) => {
+                      setPassword(event.target.value);
+                      setFieldErrors((errors) => ({
+                        ...errors,
+                        password: undefined,
+                      }));
+                      setFormError("");
+                    }}
+                    aria-invalid={Boolean(fieldErrors.password)}
+                    aria-describedby={
+                      fieldErrors.password ? "auth-password-error" : undefined
+                    }
+                    required
+                  />
+                  {fieldErrors.password && (
+                    <p
+                      id="auth-password-error"
+                      role="alert"
+                      className="auth-field-error"
+                    >
+                      {fieldErrors.password}
+                    </p>
+                  )}
+                  {(formError || authError) && (
+                    <p role="alert" className="auth-field-error">
+                      {formError || authError}
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="auth-button"
+                  disabled={submitting}
+                >
+                  {submitting && (
+                    <LoaderCircle
+                      size={17}
+                      className="auth-spinner"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {submitting
+                    ? registering
+                      ? "Создаём аккаунт…"
+                      : "Входим…"
+                    : registering
+                      ? "Зарегистрироваться"
+                      : "Войти"}
+                </button>
+                {confirmation && (
+                  <p role="status" className="auth-notice">
+                    {confirmation}
+                  </p>
+                )}
+              </form>
+              <button
+                type="button"
+                className="auth-switch"
+                onClick={switchView}
+                disabled={submitting}
+              >
+                {registering
+                  ? "Уже есть аккаунт? Войти"
+                  : "Нет аккаунта? Зарегистрироваться"}
+              </button>
+            </AuthPanelBoundary>
           )}
-
-          <p className="mt-7 flex items-start gap-2.5 border-t border-line pt-6 text-sm font-[510] leading-relaxed text-muted">
-            <Cloud
-              size={17}
-              className="mt-0.5 shrink-0 text-accent"
-              aria-hidden="true"
-            />
-            История вашего аккаунта видна только вам.
-          </p>
         </section>
       </main>
     </div>

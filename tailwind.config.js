@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: "#0B0D17",
+        bg: "#08090A",
         card: "#13162A",
         "card-hover": "#1A1F38",
         text: "#E6E9F5",

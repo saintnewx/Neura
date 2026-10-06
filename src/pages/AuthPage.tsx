@@ -1,87 +1,11 @@
 import { Component, useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Auth } from "@supabase/auth-ui-react";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
 
-// Auth UI requires appearance.theme.dark when theme="dark", even with variables.
-const authTheme = {
-  colors: {
-    brand: "#00E5FF",
-    brandAccent: "#00E5FF",
-    brandButtonText: "#0B0D17",
-    defaultButtonBackground: "rgba(255,255,255,0.04)",
-    defaultButtonBackgroundHover: "rgba(255,255,255,0.06)",
-    defaultButtonBorder: "rgba(255,255,255,0.1)",
-    defaultButtonText: "#E6E9F5",
-    dividerBackground: "#2A3050",
-    inputBackground: "#13162A",
-    inputBorder: "#2A3050",
-    inputBorderHover: "#00E5FF",
-    inputBorderFocus: "#00E5FF",
-    inputText: "#E6E9F5",
-    inputLabelText: "#8B90B0",
-    inputPlaceholder: "#8B90B0",
-    anchorTextColor: "#00E5FF",
-    anchorTextHoverColor: "#00E5FF",
-    messageText: "#E6E9F5",
-    messageBackground: "transparent",
-    messageBorder: "transparent",
-    messageTextDanger: "#FF6B6B",
-    messageBackgroundDanger: "transparent",
-    messageBorderDanger: "transparent",
-  },
-  fonts: {
-    bodyFontFamily: "Inter, system-ui, sans-serif",
-    buttonFontFamily: "Inter, system-ui, sans-serif",
-    inputFontFamily: "Inter, system-ui, sans-serif",
-    labelFontFamily: "Inter, system-ui, sans-serif",
-  },
-  fontSizes: {
-    baseBodySize: "15px",
-    baseInputSize: "16px",
-    baseLabelSize: "13px",
-    baseButtonSize: "15px",
-  },
-  radii: { borderRadiusButton: "12px", inputBorderRadius: "12px" },
-  borderWidths: { buttonBorderWidth: "1px", inputBorderWidth: "1px" },
-  space: {
-    spaceSmall: "4px",
-    spaceMedium: "8px",
-    spaceLarge: "16px",
-    labelBottomMargin: "8px",
-    anchorBottomMargin: "4px",
-    emailInputSpacing: "8px",
-    socialAuthSpacing: "0px",
-    inputPadding: "12px 14px",
-    buttonPadding: "12px 16px",
-  },
-};
-
-const authAppearance = {
-  theme: { default: authTheme, dark: authTheme },
-  variables: { default: authTheme, dark: authTheme },
-  style: {
-    button: {
-      height: "48px",
-      minHeight: "48px",
-      fontWeight: 590,
-      backdropFilter: "blur(12px)",
-      transition: "transform 150ms ease-out, opacity 150ms ease-out",
-    },
-    container: { margin: "0", gap: "0" },
-    message: {
-      fontSize: "13px",
-      lineHeight: "1.5",
-      padding: "8px 0",
-      overflowWrap: "anywhere" as const,
-    },
-  },
-};
-
-// The card and a working back link remain visible if an auth widget fails to render.
+// The card and a working back link remain visible if the auth form fails to render.
 class AuthPanelBoundary extends Component<
   { children: ReactNode; fallback: ReactNode },
   { failed: boolean }
@@ -250,31 +174,6 @@ export default function AuthPage() {
             </p>
           ) : (
             <AuthPanelBoundary fallback={<UnavailableAuth />}>
-              {/* Auth UI provides the Google icon and its OAuth flow; theme is explicit. */}
-              <fieldset className="auth-social" disabled={submitting}>
-                <Auth
-                  supabaseClient={supabase}
-                  theme="dark"
-                  appearance={authAppearance}
-                  providers={["google"]}
-                  onlyThirdPartyProviders
-                  showLinks={false}
-                  redirectTo={`${window.location.origin}/app`}
-                  localization={{
-                    variables: {
-                      sign_in: {
-                        social_provider_text: "Продолжить с {{provider}}",
-                      },
-                      sign_up: {
-                        social_provider_text: "Продолжить с {{provider}}",
-                      },
-                    },
-                  }}
-                />
-              </fieldset>
-              <div className="auth-divider" aria-hidden="true">
-                <span>или</span>
-              </div>
               <form
                 className="auth-form"
                 onSubmit={(event) => void submit(event)}

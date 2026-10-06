@@ -281,37 +281,10 @@
   font-weight: 510;
   line-height: 1.6;
 }
-.auth-social {
-  margin-top: 28px;
-}
-.auth-social button {
-  transition:
-    transform 150ms ease-out,
-    opacity 150ms ease-out;
-}
-.auth-social button:hover:not(:disabled) {
-  transform: scale(1.02);
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.12);
-}
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 24px 0;
-  color: #8b90b0;
-  font-size: 13px;
-  font-weight: 510;
-}
-.auth-divider::before,
-.auth-divider::after {
-  height: 1px;
-  flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  content: "";
-}
 .auth-form {
   display: grid;
   gap: 20px;
+  margin-top: 28px;
 }
 .auth-label {
   display: block;
@@ -491,7 +464,6 @@
     animation: none;
   }
   .auth-back,
-  .auth-social button,
   .auth-button,
   .auth-switch a,
   .auth-switch button {

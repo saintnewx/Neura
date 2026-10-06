@@ -1,23 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-   colors: {
-  bg: "#08090A",
-  card: "#0F1011",
-  "card-hover": "#161719",
-  text: "#F5F5F7",
-  muted: "#86868B",
-  line: "#1A1B1C",
-  accent: "#5E6AD2",
-  "accent-2": "#00D9FF",
-  "accent-hover": "#7B85D9",
-  error: "#FF453A",
-  success: "#30D158",
-},
+      colors: {
+        bg: "#0B0D17",
+        card: "#13162A",
+        "card-hover": "#1A1F38",
+        text: "#E6E9F5",
+        muted: "#8B90B0",
+        line: "#2A3050",
+        accent: "#00E5FF",
+        "accent-2": "#A259FF",
+        "accent-hover": "#00BFD6",
+        error: "#FF6B6B",
+        success: "#4ADE80",
+      },
       fontFamily: { sans: ["Inter", "sans-serif"] },
-      transitionDuration: { 250: "250ms", 600: "600ms" },
+      transitionDuration: { 250: "250ms" },
     },
   },
   plugins: [],

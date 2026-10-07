@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Sparkles, Copy, Download, RefreshCw, Check } from "lucide-react";
 
 type DemoSectionProps = {
-  onBeforeGenerate?: () => void;
-  onGenerated?: (task: string, type: string, result: string) => void;
+  onBeforeGenerate?: (...args: any[]) => any;
+  onGenerated?: (...args: any[]) => any;
+  disabled?: boolean;
+  [key: string]: any;
 };
 
-export default function DemoSection({}: DemoSectionProps) {
+export default function DemoSection(_props: DemoSectionProps) {
   const [task, setTask] = useState("");
   const [type, setType] = useState("Пост");
   const [result, setResult] = useState("");

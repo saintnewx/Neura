@@ -58,14 +58,11 @@ export default function DemoSection({}: DemoSectionProps) {
               lineHeight: 1,
               letterSpacing: "-0.03em",
             }}
-          >
-            Попробуй прямо сейчас
-          </h2>
-          <p
-            className="text-text-secondary mt-6 max-w-copy"
-            style={{ fontSize: "19px", lineHeight: 1.6 }}
-          >
-            Опишите задачу — Neura выдаст текст за секунды. Без регистрации.
+          <DemoSection
+  key={user?.id ?? "guest"}
+  onBeforeGenerate={workspace.before...}
+  onGenerated={workspace.saveGenerat...}
+/>
           </p>
         </div>
 

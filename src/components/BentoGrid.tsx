@@ -1,105 +1,173 @@
-import {
-  BrainCircuit,
-  Layers,
-  SlidersHorizontal,
-  Sparkles,
-  Zap,
-} from "lucide-react";
+import { Brain, Zap, Sparkles, TrendingUp, Plug } from "lucide-react";
 
-// Four features arranged into a responsive Swiss bento layout.
 export default function BentoGrid() {
   return (
-    <section id="product" className="section-space container-page">
-      <div className="reveal mb-12">
-        <p className="eyebrow mb-4">Ваша идея. Возможности AI.</p>
-        <h2>
-          Почему <span className="gradient-text">Neura</span>
-        </h2>
-        <p className="mt-5 max-w-xl text-muted">
-          Меньше времени на пустой лист. Больше — на то, что двигает ваш бизнес.
-        </p>
-      </div>
-      <div className="grid gap-6 lg:grid-cols-4 lg:grid-rows-2">
-        {/* Context is the dominant feature. */}
-        <article className="card card-interactive reveal flex flex-col lg:col-span-2 lg:row-span-2">
-          <span className="icon-box">
-            <BrainCircuit size={24} />
-          </span>
-          <h3 className="mt-6">Понимает контекст</h3>
-          <p className="mt-4 max-w-sm text-muted">
-            Ваш продукт, ваша аудитория, ваша цель. Neura связывает всё в текст,
-            который говорит на языке клиента.
+    <section
+      id="features"
+      className="relative py-24 md:py-40"
+    >
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Заголовок секции */}
+        <div className="max-w-3xl mb-16 md:mb-24">
+          <p className="text-label uppercase text-text-tertiary mb-4">
+            Возможности
           </p>
-          <div className="relative mt-8 flex min-h-[205px] flex-col items-center justify-center overflow-hidden rounded-xl border border-border bg-bg/40 p-5">
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,217,255,0.14),transparent_70%)]"
-            />
-            <div className="relative flex flex-wrap justify-center gap-2">
-              <span className="rounded-md border border-line bg-card px-3 py-1 text-xs text-muted">
-                Ваш бренд
-              </span>
-              <span className="rounded-md border border-line bg-card px-3 py-1 text-xs text-muted">
-                Аудитория
-              </span>
-              <span className="rounded-md border border-line bg-card px-3 py-1 text-xs text-muted">
-                Цель
-              </span>
+          <h2
+            className="text-text-primary font-bold"
+            style={{
+              fontSize: "clamp(36px, 5.5vw, 80px)",
+              lineHeight: 1,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Почему Neura
+          </h2>
+          <p
+            className="text-text-secondary mt-6 max-w-copy"
+            style={{ fontSize: "19px", lineHeight: 1.6 }}
+          >
+            Всё, что нужно маркетологу — в одном месте. Без переключений,
+            без пустых листов, без рутины.
+          </p>
+        </div>
+
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+          {/* Карточка 1 — большая */}
+          <div className="md:col-span-4 md:row-span-2 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 md:p-10 flex flex-col justify-between min-h-[320px] md:min-h-[420px] transition-colors duration-200 hover:bg-white/[0.05] hover:border-white/[0.14]">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center mb-6">
+                <Brain size={22} className="text-accent" />
+              </div>
+              <h3
+                className="text-text-primary font-semibold mb-3"
+                style={{ fontSize: "28px", letterSpacing: "-0.01em" }}
+              >
+                Понимает контекст
+              </h3>
+              <p
+                className="text-text-secondary max-w-md"
+                style={{ fontSize: "17px", lineHeight: 1.6 }}
+              >
+                Ваш продукт, аудитория, цель, тон. Neura анализирует задачу
+                и превращает её в текст, который говорит с вашими клиентами.
+              </p>
             </div>
-            <div
-              aria-hidden="true"
-              className="h-7 w-px bg-gradient-to-b from-line to-accent/60"
-            />
-            <div className="relative flex items-center gap-2 rounded-xl border border-accent/40 bg-accent/10 px-6 py-3 text-base font-semibold text-accent">
-              <Sparkles size={18} />
-              Neura
+
+            {/* Мини-визуал: связная сеть */}
+            <div className="mt-8 relative h-32 md:h-40">
+              <svg viewBox="0 0 400 160" className="w-full h-full" fill="none">
+                <line x1="80" y1="80" x2="160" y2="40" stroke="rgb(124 131 253 / 0.2)" strokeWidth="1" />
+                <line x1="80" y1="80" x2="160" y2="120" stroke="rgb(124 131 253 / 0.2)" strokeWidth="1" />
+                <line x1="160" y1="40" x2="240" y2="80" stroke="rgb(124 131 253 / 0.2)" strokeWidth="1" />
+                <line x1="160" y1="120" x2="240" y2="80" stroke="rgb(124 131 253 / 0.2)" strokeWidth="1" />
+                <line x1="240" y1="80" x2="320" y2="40" stroke="rgb(124 131 253 / 0.2)" strokeWidth="1" />
+                <line x1="240" y1="80" x2="320" y2="120" stroke="rgb(124 131 253 / 0.2)" strokeWidth="1" />
+
+                <circle cx="80" cy="80" r="6" fill="rgb(124 131 253 / 0.8)" />
+                <circle cx="160" cy="40" r="4" fill="rgb(124 131 253 / 0.5)" />
+                <circle cx="160" cy="120" r="4" fill="rgb(124 131 253 / 0.5)" />
+                <circle cx="240" cy="80" r="5" fill="rgb(124 131 253 / 0.7)" />
+                <circle cx="320" cy="40" r="4" fill="rgb(124 131 253 / 0.5)" />
+                <circle cx="320" cy="120" r="4" fill="rgb(124 131 253 / 0.5)" />
+              </svg>
             </div>
-            <div
-              aria-hidden="true"
-              className="h-7 w-px bg-gradient-to-b from-accent/60 to-line"
-            />
-            <span className="relative text-xs text-muted">
-              Текст, в котором узнают ваш бренд
-            </span>
           </div>
-        </article>
-        {/* Speed, tone, and formats. */}
-        <article className="card card-interactive reveal relative overflow-hidden lg:col-span-2">
-          <span className="icon-box">
-            <Zap size={24} />
-          </span>
-          <h3 className="mt-6 max-w-sm">
-            Скорость — десятки вариантов за секунды
-          </h3>
-          <p className="mt-4 max-w-sm text-muted">
-            От первого черновика до свежих идей для всей кампании. Без часов
-            ожидания.
-          </p>
-          <Zap
-            aria-hidden="true"
-            size={150}
-            strokeWidth={1}
-            className="absolute -right-5 top-8 -rotate-12 text-accent/[0.06]"
-          />
-        </article>
-        <article className="card card-interactive reveal">
-          <span className="icon-box border-accent-2/20 bg-accent-2/10 text-accent-2">
-            <SlidersHorizontal size={24} />
-          </span>
-          <h3 className="mt-6">Тон и стиль</h3>
-          <p className="mt-4 text-base text-muted">
-            Дружелюбно, смело или по делу. Просто укажите нужный тон в задаче.
-          </p>
-        </article>
-        <article className="card card-interactive reveal">
-          <span className="icon-box">
-            <Layers size={24} />
-          </span>
-          <h3 className="mt-6">4 режима</h3>
-          <p className="mt-4 text-base text-muted">
-            Посты, email, реклама и Reels. Один инструмент для ваших каналов.
-          </p>
-        </article>
+
+          {/* Карточка 2 — скорость */}
+          <div className="md:col-span-2 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col justify-between min-h-[200px] transition-colors duration-200 hover:bg-white/[0.05] hover:border-white/[0.14]">
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center mb-6">
+              <Zap size={22} className="text-accent" />
+            </div>
+            <div>
+              <div
+                className="text-text-primary font-bold mb-2"
+                style={{ fontSize: "56px", lineHeight: 1, letterSpacing: "-0.03em" }}
+              >
+                0.8s
+              </div>
+              <p className="text-text-secondary" style={{ fontSize: "15px" }}>
+                среднее время до готового текста
+              </p>
+            </div>
+          </div>
+
+          {/* Карточка 3 — тон и стиль */}
+          <div className="md:col-span-2 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col justify-between min-h-[200px] transition-colors duration-200 hover:bg-white/[0.05] hover:border-white/[0.14]">
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center mb-6">
+              <Sparkles size={22} className="text-accent" />
+            </div>
+            <div>
+              <h3
+                className="text-text-primary font-semibold mb-3"
+                style={{ fontSize: "18px" }}
+              >
+                Тон и стиль
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {["Дружелюбный", "Продающий", "Официальный", "Дерзкий"].map((tone) => (
+                  <span
+                    key={tone}
+                    className="text-text-secondary border border-white/[0.08] rounded-full px-3 py-1"
+                    style={{ fontSize: "12px" }}
+                  >
+                    {tone}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Карточка 4 — тренды */}
+          <div className="md:col-span-3 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col justify-between min-h-[220px] transition-colors duration-200 hover:bg-white/[0.05] hover:border-white/[0.14]">
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center mb-6">
+              <TrendingUp size={22} className="text-accent" />
+            </div>
+            <div>
+              <h3
+                className="text-text-primary font-semibold mb-2"
+                style={{ fontSize: "18px" }}
+              >
+                Актуальные тренды
+              </h3>
+              <p
+                className="text-text-secondary mb-4"
+                style={{ fontSize: "15px", lineHeight: 1.5 }}
+              >
+                Neura учитывает, что работает сейчас — не то, что работало год назад.
+              </p>
+              <svg viewBox="0 0 300 60" className="w-full h-12" fill="none">
+                <path
+                  d="M0 50 L50 42 L100 46 L150 30 L200 20 L250 15 L300 8"
+                  stroke="rgb(124 131 253 / 0.6)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {/* Карточка 5 — интеграции */}
+          <div className="md:col-span-3 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col justify-between min-h-[220px] transition-colors duration-200 hover:bg-white/[0.05] hover:border-white/[0.14]">
+            <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center mb-6">
+              <Plug size={22} className="text-accent" />
+            </div>
+            <div>
+              <h3
+                className="text-text-primary font-semibold mb-2"
+                style={{ fontSize: "18px" }}
+              >
+                Готово к работе
+              </h3>
+              <p
+                className="text-text-secondary"
+                style={{ fontSize: "15px", lineHeight: 1.5 }}
+              >
+                Копируй в Telegram, Instagram, LinkedIn — или скачивай в .txt.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

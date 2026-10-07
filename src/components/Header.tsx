@@ -19,11 +19,11 @@ export default function Header() {
     <>
       <a
         href="#main"
-        className="sr-only z-[70] bg-[#0A0B14] px-6 py-3 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        className="sr-only z-[70] bg-[#08090A] px-6 py-3 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         К содержимому
       </a>
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0A0B14]/70 backdrop-blur-2xl">
+      <header className="sticky top-0 z-40 border-b border-border bg-[#08090A]/70 backdrop-blur-2xl">
         <div className="container-page relative flex h-[72px] items-center justify-between gap-6">
           <Link
             to="/"
@@ -58,7 +58,7 @@ export default function Header() {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen(true)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.08] text-muted hover:text-accent md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted hover:text-accent md:hidden"
           >
             <Menu size={22} />
           </button>

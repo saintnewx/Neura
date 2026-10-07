@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <!-- Social sharing card -->
   <defs>
-    <linearGradient id="brand"><stop stop-color="#00E5FF"/><stop offset="1" stop-color="#A259FF"/></linearGradient>
-    <radialGradient id="glow"><stop stop-color="#A259FF" stop-opacity=".18"/><stop offset="1" stop-color="#0B0D17" stop-opacity="0"/></radialGradient>
+    <linearGradient id="brand"><stop stop-color="#5E6AD2"/><stop offset="1" stop-color="#00D9FF"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#00D9FF" stop-opacity=".18"/><stop offset="1" stop-color="#08090A" stop-opacity="0"/></radialGradient>
   </defs>
-  <rect width="1200" height="630" fill="#0B0D17"/>
+  <rect width="1200" height="630" fill="#08090A"/>
   <ellipse cx="900" cy="250" rx="600" ry="430" fill="url(#glow)"/>
-  <path d="M80 80h1040M80 550h1040" stroke="#2A3050"/>
-  <text x="80" y="175" fill="#8B90B0" font-family="Arial,sans-serif" font-size="20" letter-spacing="5">AI ДЛЯ ВАШИХ ИДЕЙ</text>
+  <path d="M80 80h1040M80 550h1040" stroke="rgba(255,255,255,0.08)"/>
+  <text x="80" y="175" fill="#86868B" font-family="Arial,sans-serif" font-size="20" letter-spacing="5">AI ДЛЯ ВАШИХ ИДЕЙ</text>
   <text x="72" y="365" fill="url(#brand)" font-family="Arial,sans-serif" font-size="180" font-weight="800" letter-spacing="-9">Neura</text>
-  <text x="80" y="453" fill="#E6E9F5" font-family="Arial,sans-serif" font-size="46" font-weight="600">Забудь о Writer's Block</text>
+  <text x="80" y="453" fill="#F5F5F7" font-family="Arial,sans-serif" font-size="46" font-weight="600">Забудь о Writer's Block</text>
 </svg>

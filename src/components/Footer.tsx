@@ -36,7 +36,7 @@ const groups = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line/60 bg-card/20 pb-8 pt-16">
+    <footer className="border-t border-border bg-bg-elevated pb-8 pt-16">
       <div className="container-page">
         <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <Link to="/" className="text-2xl font-extrabold tracking-tight">
@@ -82,7 +82,7 @@ export default function Footer() {
         {/* Current service terms and AI-provider data handling. */}
         <details
           id="legal"
-          className="mt-10 rounded-xl border border-line/50 px-4 py-3 text-xs text-muted"
+          className="mt-10 rounded-xl border border-border px-4 py-3 text-xs text-muted"
         >
           <summary className="cursor-pointer text-sm">
             Условия демо и конфиденциальность
@@ -97,7 +97,7 @@ export default function Footer() {
             факты в сгенерированном тексте перед публикацией.
           </p>
         </details>
-        <div className="mt-8 flex flex-col items-center justify-between gap-5 border-t border-line/60 pt-7 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-5 border-t border-border pt-7 sm:flex-row">
           <p className="text-xs text-muted">
             © {new Date().getFullYear()} Neura. Все права защищены.
           </p>

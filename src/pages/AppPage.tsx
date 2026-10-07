@@ -60,7 +60,7 @@ export default function AppPage() {
   return (
     <div className="hero-glow min-h-screen font-[510]">
       {/* Compact navigation and account controls. */}
-      <header className="border-b border-line/50">
+      <header className="border-b border-border">
         <div className="container-page flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
           <div className="flex items-center gap-6">
             <Link
@@ -180,7 +180,7 @@ export default function AppPage() {
         {/* Browsable history restores the prompt, format, tone, and generated text. */}
         <section
           aria-labelledby="history-heading"
-          className="mt-12 border-t border-line/50 pt-10"
+          className="mt-12 border-t border-border pt-10"
         >
           <div className="mb-6 flex items-center justify-between gap-3">
             <h2
@@ -225,7 +225,7 @@ export default function AppPage() {
             </p>
           )}
           {!workspace.historyLoading && !workspace.records.length && (
-            <p className="glass-strong rounded-xl border border-line/50 px-6 py-8 text-center text-base text-muted">
+            <p className="glass-strong rounded-xl border border-border px-6 py-8 text-center text-base text-muted">
               Здесь появятся ваши готовые тексты. Выберите запись, чтобы
               вернуться к ней.
             </p>
@@ -239,7 +239,7 @@ export default function AppPage() {
                     onClick={() => setSelectedGeneration({ ...record })}
                     disabled={generatorBusy || loading}
                     aria-pressed={restored?.id === record.id}
-                    className={`w-full rounded-xl border bg-card p-5 text-left transition-[transform,opacity] duration-150 ease-out hover:scale-[1.01] hover:border-accent/30 disabled:scale-100 disabled:opacity-50 ${restored?.id === record.id ? "border-accent/50" : "border-line/50"}`}
+                    className={`w-full rounded-xl border bg-card p-5 text-left transition-[transform,opacity] duration-150 ease-out hover:scale-[1.01] hover:border-border-hover disabled:scale-100 disabled:opacity-50 ${restored?.id === record.id ? "border-accent/50" : "border-border"}`}
                   >
                     <span className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
                       <span>

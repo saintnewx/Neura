@@ -29,7 +29,7 @@ export default function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="section-space border-y border-line/40 bg-card/20"
+      className="section-space border-y border-border bg-bg-elevated"
     >
       <div className="container-page">
         <div className="reveal mb-12">

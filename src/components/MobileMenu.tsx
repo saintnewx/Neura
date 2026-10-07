@@ -57,7 +57,7 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Меню навигации"
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#0A0B14]/95 p-6 backdrop-blur-2xl"
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#08090A]/95 p-6 backdrop-blur-2xl"
     >
       <div className="flex items-center justify-between">
         <span className="text-[18px] font-bold leading-none tracking-tight">
@@ -67,7 +67,7 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
           type="button"
           onClick={onClose}
           aria-label="Закрыть меню"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.08] text-muted hover:text-accent"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted hover:text-accent"
         >
           <X />
         </button>

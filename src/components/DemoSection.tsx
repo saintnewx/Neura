@@ -189,7 +189,7 @@ export default function DemoSection({
       id="demo"
       className={
         variant === "landing"
-          ? "section-space border-y border-line/40 bg-card/20"
+          ? "section-space border-y border-border bg-bg-elevated"
           : "w-full"
       }
     >
@@ -313,7 +313,7 @@ export default function DemoSection({
             className={`card flex min-h-[430px] min-w-0 flex-col lg:col-span-3 ${status === "error" ? "border-error/60" : ""}`}
             aria-busy={isLoading}
           >
-            <div className="mb-6 flex items-center justify-between gap-3 border-b border-line/60 pb-5">
+            <div className="mb-6 flex items-center justify-between gap-3 border-b border-border pb-5">
               <div className="flex items-center gap-3">
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/10 text-xs font-semibold text-accent">
                   02
@@ -372,7 +372,7 @@ export default function DemoSection({
             )}
             {status === "success" && (
               <>
-                <div className="flex flex-wrap gap-3 border-t border-line/60 pt-5">
+                <div className="flex flex-wrap gap-3 border-t border-border pt-5">
                   <button
                     type="button"
                     onClick={() => void copyResult()}

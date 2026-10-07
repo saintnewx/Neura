@@ -10,7 +10,7 @@
   }
   body {
     @apply m-0 bg-bg font-sans text-lg leading-[1.65] text-text antialiased;
-    background-color: #0a0b14;
+    background-color: #08090A;
     font-weight: 510;
   }
   h1,
@@ -62,13 +62,13 @@
     @apply text-[13px] font-medium uppercase leading-normal tracking-[0.18em] text-muted;
   }
   .card {
-    @apply rounded-2xl border border-line/50 bg-card p-8;
+    @apply rounded-2xl border border-border bg-card p-8;
     transition:
       transform 200ms ease-out,
       opacity 200ms ease-out;
   }
   .card-interactive:hover {
-    @apply border-accent/30 bg-card-hover shadow-[0_0_40px_rgba(0,229,255,0.08)];
+    @apply border-border-hover bg-card-hover shadow-[0_0_40px_rgba(94,106,210,0.08)];
   }
   .btn {
     @apply inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl px-7 py-4 text-base font-semibold leading-6 hover:scale-[1.02] disabled:scale-100 disabled:opacity-40;
@@ -77,13 +77,13 @@
       opacity 150ms ease-out;
   }
   .btn-primary {
-    @apply btn bg-gradient-to-r from-accent to-accent-2 text-bg hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] disabled:shadow-none;
+    @apply btn rounded-full bg-white text-black;
   }
   .btn-secondary {
-    @apply btn border border-line bg-transparent text-text hover:border-accent/50 hover:text-accent;
+    @apply btn border border-line bg-transparent text-text hover:border-border-hover hover:text-accent;
   }
   .field {
-    @apply w-full rounded-xl border border-line bg-bg/60 p-4 text-base text-text placeholder:text-muted/70 focus:border-accent/60 focus:outline-none focus:ring-2 focus:ring-accent/10;
+    @apply w-full rounded-xl border border-line bg-bg-elevated p-4 text-base text-text placeholder:text-text-tertiary focus:border-accent/60 focus:outline-none focus:ring-2 focus:ring-accent/10;
   }
   .icon-box {
     @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-accent/15 bg-accent/10 text-accent;
@@ -92,7 +92,7 @@
     @apply bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent;
   }
   .glass-strong {
-    @apply rounded-2xl border border-line bg-card/90 shadow-[0_16px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl;
+    @apply rounded-2xl border border-line bg-bg-elevated shadow-[0_16px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl;
   }
 }
 
@@ -101,28 +101,28 @@
   background:
     radial-gradient(
       ellipse at 76% 20%,
-      rgba(0, 229, 255, 0.1),
+      rgba(94, 106, 210, 0.1),
       transparent 57%
     ),
     radial-gradient(
       ellipse at 93% 65%,
-      rgba(162, 89, 255, 0.1),
+      rgba(0, 217, 255, 0.1),
       transparent 40%
     );
 }
 .hero-grid {
   background-image:
-    linear-gradient(rgba(42, 48, 80, 0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(42, 48, 80, 0.2) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(to right, transparent, #000);
 }
 .generator-frame {
   background: linear-gradient(
     145deg,
-    rgba(0, 229, 255, 0.28),
-    rgba(162, 89, 255, 0.35) 55%,
-    rgba(42, 48, 80, 0.5)
+    rgba(94, 106, 210, 0.28),
+    rgba(0, 217, 255, 0.35) 55%,
+    rgba(255, 255, 255, 0.08)
   );
 }
 .cursor {
@@ -188,7 +188,7 @@
   min-height: 100svh;
   overflow-x: clip;
   isolation: isolate;
-  background: #0b0d17;
+  background: #08090A;
 }
 .auth-orb {
   position: fixed;
@@ -201,21 +201,21 @@
 .auth-orb-one {
   top: -120px;
   left: calc(50% - 650px);
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.18), transparent 68%);
+  background: radial-gradient(circle, rgba(94, 106, 210, 0.18), transparent 68%);
 }
 .auth-orb-two {
   top: 10%;
   right: calc(50% - 650px);
   background: radial-gradient(
     circle,
-    rgba(162, 89, 255, 0.19),
+    rgba(0, 217, 255, 0.19),
     transparent 68%
   );
 }
 .auth-orb-three {
   bottom: -210px;
   left: calc(50% - 180px);
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.12), transparent 68%);
+  background: radial-gradient(circle, rgba(94, 106, 210, 0.12), transparent 68%);
 }
 .auth-back {
   position: absolute;
@@ -225,13 +225,13 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #8b90b0;
+  color: #86868B;
   font-size: 14px;
   font-weight: 510;
   transition: opacity 150ms ease-out;
 }
 .auth-back:hover {
-  color: #00e5ff;
+  color: #5E6AD2;
 }
 .auth-main {
   position: relative;
@@ -247,9 +247,9 @@
   width: 100%;
   max-width: 440px;
   padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  background: rgba(19, 22, 42, 0.65);
+  background: rgba(255, 255, 255, 0.025);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
   -webkit-backdrop-filter: blur(32px);
   backdrop-filter: blur(32px);
@@ -258,7 +258,7 @@
 .auth-logo {
   display: block;
   margin-bottom: 28px;
-  color: #e6e9f5;
+  color: #F5F5F7;
   text-align: center;
   font-size: 24px;
   font-weight: 800;
@@ -267,7 +267,7 @@
 }
 .auth-heading {
   margin: 0;
-  color: #e6e9f5;
+  color: #F5F5F7;
   text-align: center;
   font-size: 32px;
   font-weight: 700;
@@ -276,7 +276,7 @@
 }
 .auth-subtitle {
   margin-top: 12px;
-  color: #8b90b0;
+  color: #86868B;
   text-align: center;
   font-size: 15px;
   font-weight: 510;
@@ -290,7 +290,7 @@
 .auth-label {
   display: block;
   margin-bottom: 8px;
-  color: #e6e9f5;
+  color: #F5F5F7;
   font-size: 13px;
   font-weight: 510;
   line-height: 1.5;
@@ -300,26 +300,25 @@
   width: 100%;
   height: 48px;
   padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   outline: none;
   background: rgba(255, 255, 255, 0.04);
-  color: #e6e9f5;
+  color: #F5F5F7;
   font-size: 16px;
   font-weight: 510;
   line-height: 1.5;
 }
 .auth-input::placeholder {
-  color: #8b90b0;
-  opacity: 0.75;
+  color: #5A5A5F;
 }
 .auth-input:focus-visible {
-  border-color: #00e5ff;
+  border-color: #5E6AD2;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.1);
 }
 .auth-input[aria-invalid="true"] {
-  border-color: #ff6b6b;
+  border-color: #FF453A;
 }
 .auth-input:disabled {
   cursor: not-allowed;
@@ -327,7 +326,7 @@
 }
 .auth-field-error {
   margin-top: 6px;
-  color: #ff6b6b;
+  color: #FF453A;
   font-size: 13px;
   font-weight: 510;
   line-height: 1.5;
@@ -342,9 +341,9 @@
   margin-top: 4px;
   padding: 12px 16px;
   border: 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #00e5ff, #a259ff);
-  color: #0b0d17;
+  border-radius: 9999px;
+  background: #fff;
+  color: #000;
   font-size: 16px;
   font-weight: 590;
   line-height: 1.5;
@@ -355,7 +354,6 @@
 }
 .auth-button:hover:not(:disabled) {
   transform: scale(1.02);
-  box-shadow: 0 0 28px rgba(0, 229, 255, 0.25);
 }
 .auth-button:disabled {
   cursor: not-allowed;
@@ -367,7 +365,7 @@
   margin-top: 24px;
   border: 0;
   background: transparent;
-  color: #00e5ff;
+  color: #5E6AD2;
   text-align: center;
   font-size: 14px;
   font-weight: 510;
@@ -386,7 +384,7 @@
 .auth-switch button {
   border: 0;
   background: transparent;
-  color: #00e5ff;
+  color: #5E6AD2;
   font: inherit;
   cursor: pointer;
   transition: opacity 150ms ease-out;
@@ -398,10 +396,10 @@
 .auth-notice {
   margin-top: 20px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.04);
-  color: #e6e9f5;
+  color: #F5F5F7;
   overflow-wrap: anywhere;
   font-size: 14px;
   font-weight: 510;
@@ -504,25 +502,25 @@
 .aurora-orb-one {
   top: -220px;
   left: -180px;
-  background: #00e5ff;
+  background: #5E6AD2;
   transform: translate3d(0, calc(var(--aurora-shift) * -1), 0);
 }
 .aurora-orb-two {
   top: -240px;
   right: -200px;
-  background: #a259ff;
+  background: #00D9FF;
   transform: translate3d(0, calc(var(--aurora-shift) * 0.8), 0);
 }
 .aurora-orb-three {
   bottom: -300px;
   left: -200px;
-  background: #a259ff;
+  background: #00D9FF;
   transform: translate3d(0, calc(var(--aurora-shift) * -0.8), 0);
 }
 .aurora-orb-four {
   top: 40%;
   right: -280px;
-  background: #00e5ff;
+  background: #5E6AD2;
   transform: translate3d(0, var(--aurora-shift), 0);
 }
 .aurora-grid {
@@ -562,21 +560,21 @@
     opacity 150ms ease-out;
 }
 .stage-one-primary {
-  background: linear-gradient(110deg, #00e5ff, #a259ff);
-  color: #0a0b14;
+  border-radius: 9999px;
+  background: #fff;
+  color: #000;
 }
 .stage-one-primary:hover {
   transform: scale(1.02);
-  box-shadow: 0 0 30px rgba(0, 229, 255, 0.24);
 }
 .stage-one-secondary:hover {
   transform: scale(1.02);
-  border-color: rgba(0, 229, 255, 0.3);
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.08);
+  border-color: rgba(94, 106, 210, 0.35);
+  box-shadow: 0 0 24px rgba(94, 106, 210, 0.08);
 }
 .studio-card {
-  background: rgba(19, 22, 42, 0.5);
-  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow:
     0 32px 100px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
@@ -584,7 +582,7 @@
   backdrop-filter: blur(24px);
 }
 .studio-glow {
-  background: radial-gradient(ellipse, rgba(0, 229, 255, 0.2), transparent 70%);
+  background: radial-gradient(ellipse, rgba(94, 106, 210, 0.2), transparent 70%);
 }
 .studio-cursor {
   animation: blink 1s step-end infinite;
@@ -649,7 +647,7 @@
   padding: 0 32px;
 }
 .brand-marquee-logo {
-  color: #8b90b0;
+  color: #86868B;
   font-size: 24px;
   font-weight: 600;
   line-height: 1.4;

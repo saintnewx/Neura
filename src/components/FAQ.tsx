@@ -40,7 +40,7 @@ export default function FAQ() {
           <p className="eyebrow mb-4">Есть вопросы?</p>
           <h2>Частые вопросы</h2>
         </div>
-        <div className="divide-y divide-line/70 border-y border-line/70">
+        <div className="divide-y divide-border border-y border-border">
           {questions.map((item, index) => {
             const open = openIndex === index;
             return (

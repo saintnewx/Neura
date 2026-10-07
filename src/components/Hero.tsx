@@ -83,7 +83,7 @@ export default function Hero() {
             </Link>
             <a
               href="#demo"
-              className="stage-one-secondary inline-flex min-h-14 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-8 py-4 text-base font-semibold text-text backdrop-blur-xl"
+              className="stage-one-secondary inline-flex min-h-14 items-center justify-center gap-2 rounded-full border border-border bg-white/[0.03] px-8 py-4 text-base font-semibold text-text backdrop-blur-xl"
             >
               <Play size={16} aria-hidden="true" />
               Смотреть демо
@@ -106,8 +106,8 @@ export default function Hero() {
             aria-hidden="true"
             className="studio-glow pointer-events-none absolute -inset-12 -z-10 rounded-full blur-3xl"
           />
-          <div className="studio-card overflow-hidden rounded-3xl border border-white/[0.06] bg-card/50 backdrop-blur-xl">
-            <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-5 py-5 sm:px-6">
+          <div className="studio-card overflow-hidden rounded-3xl border border-border bg-card backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-5 sm:px-6">
               <div className="flex items-center gap-2.5 text-[15px] font-semibold text-text">
                 <Sparkles
                   size={18}
@@ -116,7 +116,7 @@ export default function Hero() {
                 />
                 Neura Studio
               </div>
-              <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-medium text-muted">
+              <span className="shrink-0 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-[11px] font-medium text-muted">
                 GPT-4o
               </span>
             </div>
@@ -133,9 +133,9 @@ export default function Hero() {
                   value={exampleTask}
                   readOnly
                   rows={6}
-                  className="w-full resize-none rounded-2xl border border-white/[0.06] bg-bg/40 p-4 text-[14px] leading-[1.75] text-text outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  className="w-full resize-none rounded-2xl border border-border bg-bg/40 p-4 text-[14px] leading-[1.75] text-text outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 />
-                <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-[11px] text-muted">
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3 py-1.5 text-[11px] text-muted">
                   <Coffee size={13} aria-hidden="true" />
                   Пост для кофейни
                 </span>
@@ -162,7 +162,7 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-4 text-[11px] text-muted sm:px-6">
+            <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4 text-[11px] text-muted sm:px-6">
               <span>Меньше рутины. Больше идей.</span>
               <span className="flex shrink-0 items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent" />

@@ -30,10 +30,10 @@ export default function BentoGrid() {
             Ваш продукт, ваша аудитория, ваша цель. Neura связывает всё в текст,
             который говорит на языке клиента.
           </p>
-          <div className="relative mt-8 flex min-h-[205px] flex-col items-center justify-center overflow-hidden rounded-xl border border-line/60 bg-bg/40 p-5">
+          <div className="relative mt-8 flex min-h-[205px] flex-col items-center justify-center overflow-hidden rounded-xl border border-border bg-bg/40 p-5">
             <div
               aria-hidden="true"
-              className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(162,89,255,0.14),transparent_70%)]"
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,217,255,0.14),transparent_70%)]"
             />
             <div className="relative flex flex-wrap justify-center gap-2">
               <span className="rounded-md border border-line bg-card px-3 py-1 text-xs text-muted">

@@ -60,10 +60,10 @@ export default function Pricing() {
         {plans.map((plan) => (
           <article
             key={plan.name}
-            className={`card card-interactive reveal relative flex flex-col ${plan.popular ? "border-accent bg-gradient-to-b from-accent/[0.05] to-card shadow-[0_0_40px_rgba(0,229,255,0.06)]" : ""}`}
+            className={`card card-interactive reveal relative flex flex-col ${plan.popular ? "border-accent bg-gradient-to-b from-accent/[0.05] to-card shadow-[0_0_40px_rgba(94,106,210,0.06)]" : ""}`}
           >
             {plan.popular && (
-              <div className="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-bg">
+              <div className="absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white">
                 <Sparkles size={12} />
                 Популярный
               </div>
@@ -90,7 +90,7 @@ export default function Pricing() {
             >
               {plan.cta}
             </Link>
-            <div className="my-7 h-px bg-line/70" />
+            <div className="my-7 h-px bg-line" />
             <ul className="space-y-4">
               {plan.features.map((feature) => (
                 <li

@@ -59,13 +59,10 @@ export default function Landing() {
         <SocialProof />
         <BentoGrid />
         <DemoSection
-          key={user?.id ?? "guest"}
-          disabled={loading || workspace.historyLoading}
-          onBeforeGenerate={workspace.beforeGenerate}
-          onGenerated={workspace.saveGeneration}
-          onUsage={workspace.updateUsage}
-          onLimitReached={workspace.openLimit}
-        />
+  key={user?.id ?? "guest"}
+  onBeforeGenerate={workspace.beforeGenerate}
+  onGenerated={workspace.saveGenerated}
+/>.
         {workspace.historyError && (
           <div role="alert" className="container-page mt-4 text-sm text-error">
             <p>{workspace.historyError}</p>

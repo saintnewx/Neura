@@ -1,70 +1,113 @@
-import { useState } from "react";
-import { Menu } from "lucide-react";
-import { Link } from "react-router-dom";
-import MobileMenu from "./MobileMenu";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 
-// Shared section navigation.
-export const navigation = [
-  { label: "Продукт", href: "#product" },
-  { label: "Тарифы", href: "#pricing" },
-  { label: "Отзывы", href: "#testimonials" },
-  { label: "FAQ", href: "#faq" },
+const NAV_LINKS = [
+  { href: "#story", label: "Как работает" },
+  { href: "#features", label: "Возможности" },
+  { href: "#pricing", label: "Тарифы" },
+  { href: "#faq", label: "FAQ" },
 ];
 
-// Sticky header and mobile navigation trigger.
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only z-[70] bg-[#08090A] px-6 py-3 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-[#0D0D0C]/80 backdrop-blur-xl border-b border-white/[0.06]"
+            : "bg-transparent border-b border-transparent"
+        }`}
       >
-        К содержимому
-      </a>
-      <header className="sticky top-0 z-40 border-b border-border bg-[#08090A]/70 backdrop-blur-2xl">
-        <div className="container-page relative flex h-[72px] items-center justify-between gap-6">
-          <Link
-            to="/"
-            aria-label="Neura — на главную"
-            className="inline-flex items-baseline text-[18px] font-bold leading-none tracking-tight"
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <a
+            href="/"
+            className="text-text-primary font-bold text-lg tracking-tight"
           >
             Neura<span className="text-accent">.</span>
-          </Link>
-          <nav
-            aria-label="Основная навигация"
-            className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex"
-          >
-            {navigation.map((item) => (
+          </a>
+
+          <nav className="hidden md:flex items-center gap-8">
+            {NAV_LINKS.map((link) => (
               <a
-                key={item.href}
-                href={item.href}
-                className="text-[14px] font-medium text-muted hover:text-accent"
+                key={link.href}
+                href={link.href}
+                className="text-text-secondary hover:text-text-primary transition-colors duration-200"
+                style={{ fontSize: "14px" }}
               >
-                {item.label}
+                {link.label}
               </a>
             ))}
           </nav>
-          <Link
-            to="/app"
-            className="stage-one-primary hidden min-h-[42px] items-center justify-center rounded-full px-6 py-2.5 text-[14px] font-semibold md:inline-flex"
-          >
-            Начать бесплатно
-          </Link>
+
+          <div className="hidden md:flex items-center gap-3">
+            <a
+              href="/app"
+              className="inline-flex items-center justify-center bg-[#F5F5F7] text-[#0D0D0C] rounded-full px-5 font-medium transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              style={{ minHeight: "40px", fontSize: "14px" }}
+            >
+              Попробовать бесплатно
+            </a>
+          </div>
+
           <button
-            type="button"
-            aria-label="Открыть меню"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
             onClick={() => setMenuOpen(true)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted hover:text-accent md:hidden"
+            className="md:hidden text-text-primary p-2 -mr-2"
+            aria-label="Открыть меню"
           >
             <Menu size={22} />
           </button>
         </div>
       </header>
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-[60] bg-[#0D0D0C]/95 backdrop-blur-2xl md:hidden">
+          <div className="flex items-center justify-between px-6 h-16">
+            <span className="text-text-primary font-bold text-lg">
+              Neura<span className="text-accent">.</span>
+            </span>
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="text-text-primary p-2 -mr-2"
+              aria-label="Закрыть меню"
+            >
+              <X size={22} />
+            </button>
+          </div>
+
+          <nav className="flex flex-col px-6 pt-8 gap-6">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-text-primary text-2xl font-medium"
+              >
+                {link.label}
+              </a>
+            ))}
+
+            <a
+              href="/app"
+              onClick={() => setMenuOpen(false)}
+              className="mt-6 inline-flex items-center justify-center bg-[#F5F5F7] text-[#0D0D0C] rounded-full px-6 font-medium"
+              style={{ minHeight: "52px", fontSize: "17px" }}
+            >
+              Попробовать бесплатно
+            </a>
+          </nav>
+        </div>
+      )}
     </>
   );
 }

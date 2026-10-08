@@ -30,7 +30,6 @@ export default function DemoSection(_props: DemoSectionProps) {
     setLoading(true);
     setResult("");
 
-    // Демонстрация: показываем заранее подготовленный пример
     setTimeout(() => {
       setResult(example);
       setLoading(false);
@@ -44,10 +43,7 @@ export default function DemoSection(_props: DemoSectionProps) {
   };
 
   return (
-    <section
-      id="demo"
-      className="relative py-24 md:py-40"
-    >
+    <section id="demo" className="relative py-24 md:py-40">
       <div className="max-w-6xl mx-auto px-6">
         <div className="max-w-3xl mb-16 md:mb-24">
           <p className="text-label uppercase text-text-tertiary mb-4">
@@ -60,16 +56,12 @@ export default function DemoSection(_props: DemoSectionProps) {
               lineHeight: 1,
               letterSpacing: "-0.03em",
             }}
-          <DemoSection
-  key={user?.id ?? "guest"}
-  onBeforeGenerate={workspace.before...}
-  onGenerated={workspace.saveGenerat...}
-/>
-          </p>
+          >
+            Создай контент, который цепляет
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Левая панель */}
           <div className="lg:col-span-2 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col">
             <div className="flex items-center gap-2 mb-6">
               <Sparkles size={18} className="text-accent" />
@@ -130,7 +122,6 @@ export default function DemoSection(_props: DemoSectionProps) {
             </button>
           </div>
 
-          {/* Правая панель */}
           <div className="lg:col-span-3 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col min-h-[400px]">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">

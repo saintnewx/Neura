@@ -61,7 +61,7 @@ export default function Landing() {
         <DemoSection
   key={user?.id ?? "guest"}
   onBeforeGenerate={workspace.beforeGenerate}
-  onGenerated={workspace.saveGenerated}
+  onGenerated={workspace.saveGeneration}
 />.
         {workspace.historyError && (
           <div role="alert" className="container-page mt-4 text-sm text-error">

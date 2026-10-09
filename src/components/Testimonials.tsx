@@ -24,29 +24,34 @@ const testimonials = [
   },
 ];
 
-// Sample social proof is explicitly identified in this demo project.
 export default function Testimonials() {
   return (
-    <section
-      id="testimonials"
-      className="section-space border-y border-border bg-bg-elevated"
-    >
-      <div className="container-page">
-        <div className="reveal mb-12">
-          <p className="eyebrow mb-4">Создано для тех, кто создаёт</p>
-          <h2>
-            Что говорят
-            <br className="hidden sm:block" /> маркетологи
+    <section id="testimonials" className="relative py-24 md:py-40">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-3xl mb-16 md:mb-24">
+          <p className="text-label uppercase text-text-tertiary mb-4">
+            Создано для тех, кто создаёт
+          </p>
+          <h2
+            className="text-text-primary font-bold"
+            style={{
+              fontSize: "clamp(36px, 5.5vw, 80px)",
+              lineHeight: 1,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Что говорят маркетологи
           </h2>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((item) => (
             <figure
               key={item.name}
-              className="card card-interactive reveal m-0 flex flex-col"
+              className="rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col transition-colors duration-200 hover:bg-white/[0.05] hover:border-white/[0.14] m-0"
             >
-              <div className="mb-6 flex items-center justify-between">
-                <div aria-label="5 из 5" className="flex gap-1 text-accent">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex gap-1 text-accent" aria-label="5 из 5">
                   {Array.from({ length: 5 }, (_, index) => (
                     <Star
                       key={index}
@@ -56,24 +61,46 @@ export default function Testimonials() {
                     />
                   ))}
                 </div>
-                <Quote size={24} className="text-line" />
+                <Quote size={24} className="text-white/10" />
               </div>
-              <blockquote className="mb-8 flex-1 text-base leading-[1.8]">
+
+              <blockquote
+                className="text-text-primary flex-1 mb-8"
+                style={{ fontSize: "16px", lineHeight: 1.8 }}
+              >
                 «{item.quote}»
               </blockquote>
+
               <figcaption className="flex items-center gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/20 text-sm font-semibold text-accent">
+                <span
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/20 text-accent font-semibold"
+                  style={{ fontSize: "13px" }}
+                >
                   {item.initials}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold">{item.name}</p>
-                  <p className="mt-0.5 text-xs text-muted">{item.role}</p>
+                  <p
+                    className="text-text-primary font-semibold"
+                    style={{ fontSize: "14px" }}
+                  >
+                    {item.name}
+                  </p>
+                  <p
+                    className="text-text-tertiary mt-0.5"
+                    style={{ fontSize: "12px" }}
+                  >
+                    {item.role}
+                  </p>
                 </div>
               </figcaption>
             </figure>
           ))}
         </div>
-        <p className="mt-6 text-xs text-muted">
+
+        <p
+          className="mt-6 text-text-tertiary"
+          style={{ fontSize: "12px" }}
+        >
           Отзывы и логотипы — демонстрационные примеры.
         </p>
       </div>

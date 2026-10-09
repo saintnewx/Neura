@@ -1,80 +1,102 @@
-import { useId, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import Reveal from "./Reveal";
 
-const questions = [
+const FAQ_ITEMS = [
   {
-    question: "Что такое Neura и кому она подойдёт?",
-    answer:
-      "Neura — AI-помощник для маркетологов, SMM-менеджеров и предпринимателей. Он помогает начать работу над постом, письмом, рекламой или сценарием Reels с понятного черновика.",
+    q: "Что такое Neura?",
+    a: "Neura — это AI-инструмент для генерации маркетингового контента. Он пишет посты, письма, рекламные тексты и сценарии для Reels за секунды. Ты описываешь задачу — Neura выдаёт готовый текст.",
   },
   {
-    question: "Можно ли попробовать бесплатно?",
-    answer:
-      "Да. Откройте генератор на этой странице или отдельную рабочую область. Регистрация и банковская карта не нужны. Ваша задача будет передана AI-сервису для создания текста.",
+    q: "Нужно ли указывать данные карты?",
+    a: "Нет. Ты можешь начать бесплатно — 10 генераций в месяц без карты. Если понравится, перейдёшь на Pro, когда сам захочешь.",
   },
   {
-    question: "Какие форматы контента поддерживаются?",
-    answer:
-      "Четыре формата: посты для социальных сетей, email, рекламные тексты и сценарии Reels. Выберите формат перед генерацией, а в задаче укажите аудиторию и площадку.",
+    q: "Какие модели AI используются?",
+    a: "Neura работает на открытых моделях через NVIDIA NIM. Это значит, что твои данные не используются для обучения моделей, а генерация проходит быстро и стабильно.",
   },
   {
-    question: "Как задать свой тон и стиль?",
-    answer:
-      "Добавьте пожелания прямо в описание задачи: например, «дружелюбно, без канцелярита» или «коротко и по делу». Полезно также привести пример текста вашего бренда.",
+    q: "Можно ли использовать Neura для коммерческих целей?",
+    a: "Да. Всё, что ты генерируешь, принадлежит тебе. Ты можешь использовать тексты в блогах, соцсетях, рекламе — где угодно.",
   },
   {
-    question: "Нужно ли редактировать сгенерированный текст?",
-    answer:
-      "Да. Проверьте факты, цены и обещания, добавьте детали вашего продукта и адаптируйте текст под бренд. AI помогает с черновиком, а финальное решение остаётся за вами.",
+    q: "На каких языках работает Neura?",
+    a: "Neura понимает русский и английский. Ты можешь писать задачу на одном языке, а получить результат на другом — или на том же.",
+  },
+  {
+    q: "Что будет, если я исчерпаю лимит?",
+    a: "Бесплатно — 10 генераций в месяц. После этого можно подождать до следующего месяца или перейти на Pro — там лимита нет.",
   },
 ];
 
-// Single-open accordion with semantic buttons and animated disclosure.
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const id = useId();
+  const [open, setOpen] = useState<number | null>(null);
+
   return (
-    <section id="faq" className="section-space container-page">
-      <div className="reveal mx-auto max-w-3xl">
-        <div className="mb-12 text-center">
-          <p className="eyebrow mb-4">Есть вопросы?</p>
-          <h2>Частые вопросы</h2>
-        </div>
-        <div className="divide-y divide-border border-y border-border">
-          {questions.map((item, index) => {
-            const open = openIndex === index;
+    <section id="faq" className="relative py-24 md:py-40">
+      <div className="max-w-6xl mx-auto px-6">
+        <Reveal>
+          <div className="max-w-3xl mb-16 md:mb-24">
+            <p className="text-label uppercase text-text-tertiary mb-4">
+              Вопросы
+            </p>
+            <h2
+              className="text-text-primary font-bold"
+              style={{
+                fontSize: "clamp(36px, 5.5vw, 80px)",
+                lineHeight: 1,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              Частые вопросы
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="max-w-3xl">
+          {FAQ_ITEMS.map((item, i) => {
+            const isOpen = open === i;
             return (
-              <div key={item.question}>
-                <h3>
+              <Reveal key={item.q} delay={i * 60}>
+                <div className="border-b border-white/[0.08]">
                   <button
                     type="button"
-                    id={`${id}-question-${index}`}
-                    aria-expanded={open}
-                    aria-controls={`${id}-answer-${index}`}
-                    onClick={() => setOpenIndex(open ? null : index)}
-                    className="flex w-full items-center justify-between gap-6 py-6 text-left text-base font-medium leading-relaxed transition-colors hover:text-accent sm:text-lg"
+                    onClick={() => setOpen(isOpen ? null : i)}
+                    className="w-full flex items-center justify-between gap-6 py-6 text-left transition-colors duration-200 group"
+                    aria-expanded={isOpen}
                   >
-                    {item.question}
-                    <ChevronDown
+                    <span
+                      className={`font-semibold transition-colors duration-200 ${
+                        isOpen ? "text-accent" : "text-text-primary group-hover:text-accent"
+                      }`}
+                      style={{ fontSize: "18px", lineHeight: 1.4 }}
+                    >
+                      {item.q}
+                    </span>
+                    <Plus
                       size={20}
-                      className={`shrink-0 text-muted transition-transform duration-300 ${open ? "rotate-180 text-accent" : ""}`}
+                      className={`flex-shrink-0 transition-transform duration-300 ${
+                        isOpen ? "rotate-45 text-accent" : "text-text-tertiary"
+                      }`}
                     />
                   </button>
-                </h3>
-                <div
-                  id={`${id}-answer-${index}`}
-                  role="region"
-                  aria-labelledby={`${id}-question-${index}`}
-                  aria-hidden={!open}
-                  className={`grid transition-[grid-template-rows,opacity] duration-300 ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
-                >
-                  <div className="overflow-hidden">
-                    <p className="max-w-2xl pb-6 text-base leading-[1.8] text-muted">
-                      {item.answer}
+
+                  <div
+                    className="overflow-hidden transition-all duration-400 ease-out"
+                    style={{
+                      maxHeight: isOpen ? "400px" : "0px",
+                      opacity: isOpen ? 1 : 0,
+                    }}
+                  >
+                    <p
+                      className="text-text-secondary pb-6 pr-8"
+                      style={{ fontSize: "16px", lineHeight: 1.7 }}
+                    >
+                      {item.a}
                     </p>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             );
           })}
         </div>

@@ -4,7 +4,6 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Новая система
         "bg-base": "#0D0D0C",
         "bg-elevated": "#161616",
         card: "rgba(255, 255, 255, 0.04)",
@@ -33,8 +32,31 @@ export default {
       transitionDuration: {
         250: "250ms",
       },
+      animation: {
+        "sphere-rotate": "sphere-rotate 60s linear infinite",
+        "sphere-pulse": "sphere-pulse 4s ease-in-out infinite",
+        "scroll-indicator": "scroll-indicator 2.4s ease-in-out infinite",
+        marquee: "marquee 40s linear infinite",
+      },
+      keyframes: {
+        "sphere-rotate": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        "sphere-pulse": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+        },
+        "scroll-indicator": {
+          "0%, 100%": { transform: "translateY(0)", opacity: "0.45" },
+          "50%": { transform: "translateY(5px)", opacity: "0.85" },
+        },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+      },
     },
   },
   plugins: [],
 };
-    

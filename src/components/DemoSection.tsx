@@ -1,5 +1,37 @@
-import { useState } from "react";
-import { Sparkles, Copy, Download, RefreshCw, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Sparkles, Copy, Download, RefreshCw, Check, Lock } from "lucide-react";
+
+const GUEST_LIMIT = 5;
+const STORAGE_KEY = "neura_demo_usage";
+
+type Usage = { count: number; date: string };
+
+function todayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getUsage(): Usage {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { count: 0, date: todayKey() };
+    const data = JSON.parse(raw) as Usage;
+    if (data.date !== todayKey()) return { count: 0, date: todayKey() };
+    return data;
+  } catch {
+    return { count: 0, date: todayKey() };
+  }
+}
+
+function saveUsage(count: number): void {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ count, date: todayKey() })
+    );
+  } catch {
+    /* localStorage может быть отключён */
+  }
+}
 
 type DemoSectionProps = {
   onBeforeGenerate?: (...args: any[]) => any;
@@ -14,32 +46,119 @@ export default function DemoSection(_props: DemoSectionProps) {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
+  const [usage, setUsage] = useState<Usage>({ count: 0, date: "" });
 
-  const example = `🍂 Новинка в нашем меню! 🍂
+  useEffect(() => {
+    setUsage(getUsage());
+  }, []);
 
-Сезонные напитки «Осенний шарм» уже в продаже:
+  const remaining = Math.max(0, GUEST_LIMIT - usage.count);
+  const limitReached = remaining <= 0 && usage.date !== "";
 
-— Карамельный эспрессо-тарт — 350 ₽
-— Медовый латте с корицей — 400 ₽
-— Травяной холодный кофе — 450 ₽
+  const handleGenerate = async () => {
+    const trimmed = task.trim();
+    if (trimmed.length < 5) return;
+    if (limitReached) {
+      setError("Дневной лимит исчерпан. Войдите в аккаунт, чтобы получить 20 генераций в день.");
+      return;
+    }
 
-Попробуйте прямо сейчас и почувствуйте, как осень согревает вас изнутри.`;
-
-  const handleGenerate = () => {
-    if (task.trim().length < 5) return;
     setLoading(true);
     setResult("");
+    setError("");
 
-    setTimeout(() => {
-      setResult(example);
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task: trimmed, type }),
+      });
+
+      if (!res.ok || !res.body) {
+        // Ошибки валидации возвращаются JSON'ом
+        let message = `Ошибка сервера: ${res.status}`;
+        try {
+          const data = await res.json();
+          if (data?.error) message = String(data.error);
+        } catch {
+          /* ignore */
+        }
+        throw new Error(message);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullText = "";
+      let streamError = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const blocks = buffer.split("\n\n");
+        buffer = blocks.pop() || "";
+
+        for (const block of blocks) {
+          if (!block.startsWith("data:")) continue;
+          const payload = block.slice(5).trim();
+          if (!payload || payload === "[DONE]") continue;
+
+          try {
+            const data = JSON.parse(payload) as {
+              content?: string;
+              error?: string;
+            };
+            if (data.error) {
+              streamError = data.error;
+              continue;
+            }
+            if (data.content) {
+              fullText += data.content;
+              setResult(fullText);
+            }
+          } catch {
+            /* skip malformed frame */
+          }
+        }
+      }
+
+      if (streamError) {
+        setError(streamError);
+        return;
+      }
+
+      if (!fullText.trim()) {
+        setError("Модель вернула пустой ответ. Попробуйте снова.");
+        return;
+      }
+
+      const nextCount = usage.count + 1;
+      saveUsage(nextCount);
+      setUsage({ count: nextCount, date: todayKey() });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Что-то пошло не так. Попробуйте снова.");
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(result);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([result], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `neura-${type.toLowerCase()}-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -59,9 +178,16 @@ export default function DemoSection(_props: DemoSectionProps) {
           >
             Создай контент, который цепляет
           </h2>
+          <p
+            className="text-text-secondary mt-6 max-w-copy"
+            style={{ fontSize: "19px", lineHeight: 1.6 }}
+          >
+            Опиши задачу — Neura выдаст готовый текст за секунды. Без регистрации.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Левая панель */}
           <div className="lg:col-span-2 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col">
             <div className="flex items-center gap-2 mb-6">
               <Sparkles size={18} className="text-accent" />
@@ -83,8 +209,9 @@ export default function DemoSection(_props: DemoSectionProps) {
               value={task}
               onChange={(e) => setTask(e.target.value)}
               placeholder="Например: напиши дружелюбный пост о новом осеннем меню кофейни..."
-              className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4 text-text-primary placeholder:text-text-tertiary outline-none focus:border-white/[0.2] transition-colors resize-none mb-4"
+              className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4 text-text-primary placeholder:text-text-tertiary outline-none focus:border-white/[0.2] transition-colors resize-none mb-2"
               style={{ fontSize: "15px", minHeight: "160px" }}
+              maxLength={500}
             />
             <div
               className="text-text-tertiary mb-6 text-right"
@@ -111,17 +238,46 @@ export default function DemoSection(_props: DemoSectionProps) {
               <option>Reels</option>
             </select>
 
+            <div
+              className="flex items-center justify-between mb-4 text-text-tertiary"
+              style={{ fontSize: "12px" }}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Lock size={12} />
+                {remaining} / {GUEST_LIMIT} генераций сегодня
+              </span>
+              {limitReached && (
+                <a href="/auth" className="text-accent hover:underline">
+                  Войти →
+                </a>
+              )}
+            </div>
+
             <button
               onClick={handleGenerate}
-              disabled={task.trim().length < 5 || loading}
+              disabled={task.trim().length < 5 || loading || limitReached}
               className="mt-auto inline-flex items-center justify-center gap-2 bg-[#F5F5F7] text-[#0D0D0C] rounded-full px-6 font-medium transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
               style={{ minHeight: "52px", fontSize: "17px" }}
             >
               <Sparkles size={18} />
-              {loading ? "Генерируем..." : "Сгенерировать"}
+              {loading
+                ? "Генерируем..."
+                : limitReached
+                  ? "Лимит исчерпан"
+                  : "Сгенерировать"}
             </button>
+
+            {error && (
+              <p
+                className="text-error mt-3"
+                style={{ fontSize: "13px", lineHeight: 1.5 }}
+              >
+                {error}
+              </p>
+            )}
           </div>
 
+          {/* Правая панель */}
           <div className="lg:col-span-3 rounded-panel bg-white/[0.03] border border-white/[0.08] p-8 flex flex-col min-h-[400px]">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
@@ -141,7 +297,7 @@ export default function DemoSection(_props: DemoSectionProps) {
               </span>
             </div>
 
-            {!result && !loading && (
+            {!result && !loading && !error && (
               <div className="flex-1 flex items-center justify-center text-center">
                 <p
                   className="text-text-tertiary max-w-xs"
@@ -153,7 +309,7 @@ export default function DemoSection(_props: DemoSectionProps) {
               </div>
             )}
 
-            {loading && (
+            {loading && !result && (
               <div className="flex-1 flex flex-col gap-3 pt-2">
                 <div className="h-5 bg-white/[0.04] rounded w-3/4 animate-pulse" />
                 <div className="h-5 bg-white/[0.04] rounded w-full animate-pulse" />
@@ -163,39 +319,46 @@ export default function DemoSection(_props: DemoSectionProps) {
               </div>
             )}
 
-            {result && !loading && (
+            {result && (
               <>
                 <div
                   className="flex-1 text-text-primary whitespace-pre-line"
                   style={{ fontSize: "16px", lineHeight: 1.7 }}
                 >
                   {result}
+                  {loading && (
+                    <span className="inline-block w-2 h-4 bg-accent ml-1 animate-pulse align-middle" />
+                  )}
                 </div>
-                <div className="flex flex-wrap gap-3 mt-8">
-                  <button
-                    onClick={handleCopy}
-                    className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
-                    style={{ minHeight: "44px", fontSize: "14px" }}
-                  >
-                    {copied ? <Check size={16} /> : <Copy size={16} />}
-                    {copied ? "Скопировано" : "Копировать"}
-                  </button>
-                  <button
-                    className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
-                    style={{ minHeight: "44px", fontSize: "14px" }}
-                  >
-                    <Download size={16} />
-                    Скачать
-                  </button>
-                  <button
-                    onClick={handleGenerate}
-                    className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
-                    style={{ minHeight: "44px", fontSize: "14px" }}
-                  >
-                    <RefreshCw size={16} />
-                    Перегенерировать
-                  </button>
-                </div>
+                {!loading && (
+                  <div className="flex flex-wrap gap-3 mt-8">
+                    <button
+                      onClick={handleCopy}
+                      className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
+                      style={{ minHeight: "44px", fontSize: "14px" }}
+                    >
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                      {copied ? "Скопировано" : "Копировать"}
+                    </button>
+                    <button
+                      onClick={handleDownload}
+                      className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
+                      style={{ minHeight: "44px", fontSize: "14px" }}
+                    >
+                      <Download size={16} />
+                      Скачать
+                    </button>
+                    <button
+                      onClick={handleGenerate}
+                      disabled={loading || limitReached}
+                      className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03] disabled:opacity-40 disabled:cursor-not-allowed"
+                      style={{ minHeight: "44px", fontSize: "14px" }}
+                    >
+                      <RefreshCw size={16} />
+                      Перегенерировать
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>

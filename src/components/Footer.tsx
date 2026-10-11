@@ -1,135 +1,119 @@
-import { Github, Linkedin, Twitter } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Section destinations keep navigation useful without fabricated pages.
+// Only existing routes and landing anchors; social accounts are not configured.
 const groups = [
   {
     title: "Продукт",
     links: [
-      ["Возможности", "#product"],
-      ["Тарифы", "#pricing"],
-      ["Попробовать", "/app"],
+      ["Возможности", "/#features"],
+      ["Демо-тарифы", "/#pricing"],
+      ["Рабочая область", "/app"],
     ],
   },
   {
     title: "Компания",
     links: [
-      ["О Neura", "#product"],
-      ["Наши пользователи", "#testimonials"],
+      ["О продукте", "/#features"],
+      ["Войти в Neura", "/auth"],
     ],
   },
   {
     title: "Ресурсы",
     links: [
-      ["Демо", "#demo"],
-      ["Частые вопросы", "#faq"],
+      ["Попробовать генерацию", "/#demo"],
+      ["Частые вопросы", "/#faq"],
     ],
   },
   {
     title: "Правовое",
     links: [
-      ["Условия использования", "#legal"],
-      ["Конфиденциальность", "#legal"],
+      ["Условия демо", "/#legal"],
+      ["Обработка данных", "/#data-use"],
     ],
   },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-bg-elevated pb-8 pt-16">
-      <div className="container-page">
-        <div className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <Link to="/" className="text-2xl font-extrabold tracking-tight">
+    <footer className="border-t border-white/[0.08] bg-bg-elevated py-12 sm:py-16">
+      <div className="mx-auto max-w-6xl px-6">
+        {/* Brand and calm, consistent navigation. */}
+        <div className="mb-12 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+          <Link
+            to="/"
+            aria-label="Neura — на главную"
+            className="inline-flex min-h-11 items-center self-start text-2xl font-bold tracking-tight text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
+          >
             Neura<span className="text-accent">.</span>
           </Link>
-          <p className="text-sm text-muted">
-            Ваши идеи заслуживают нужных слов.
+          <p className="text-sm leading-relaxed text-text-secondary">
+            Больше идей. Меньше рутины.
           </p>
         </div>
         <nav
           aria-label="Навигация в подвале"
-          className="grid grid-cols-2 gap-8 md:grid-cols-4"
+          className="grid grid-cols-1 gap-x-8 gap-y-8 min-[375px]:grid-cols-2 md:grid-cols-4"
         >
           {groups.map((group) => (
-            <div key={group.title}>
-              <h3 className="mb-5 text-sm font-semibold tracking-normal">
+            <div key={group.title} className="min-w-0">
+              <h3 className="mb-3 text-sm font-semibold text-text-primary">
                 {group.title}
               </h3>
-              <ul className="space-y-3">
+              <ul>
                 {group.links.map(([label, href]) => (
                   <li key={label}>
-                    {href.startsWith("/") ? (
-                      <Link
-                        to={href}
-                        className="text-sm text-muted transition-colors hover:text-accent"
-                      >
-                        {label}
-                      </Link>
-                    ) : (
-                      <a
-                        href={href}
-                        className="text-sm text-muted transition-colors hover:text-accent"
-                      >
-                        {label}
-                      </a>
-                    )}
+                    <Link
+                      to={href}
+                      className="inline-flex min-h-11 max-w-full items-center py-2 text-sm leading-relaxed text-text-secondary transition-colors duration-150 hover:text-text-primary motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
+                    >
+                      {label}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </nav>
-        {/* Current service terms and AI-provider data handling. */}
-        <details
+
+        {/* Visible demo disclosure; these are not links to nonexistent legal pages. */}
+        <section
           id="legal"
-          className="mt-10 rounded-xl border border-border px-4 py-3 text-xs text-muted"
+          aria-labelledby="demo-terms-heading"
+          className="mt-12 scroll-mt-24 border-t border-white/[0.08] pt-8"
         >
-          <summary className="cursor-pointer text-sm">
-            Условия демо и конфиденциальность
-          </summary>
-          <p className="mt-3 leading-relaxed">
-            Это демонстрационный интерфейс: тарифы, логотипы и отзывы приведены
-            как примеры. Оплата и регистрация не подключены. Введённая задача
-            передаётся AI-сервису NVIDIA для генерации текста. Приложение не
-            сохраняет историю задач; обработка данных провайдером регулируется
-            его условиями. Google Fonts получает стандартные сетевые данные для
-            загрузки шрифта. Не вводите конфиденциальную информацию. Проверьте
-            факты в сгенерированном тексте перед публикацией.
+          <h3
+            id="demo-terms-heading"
+            className="mb-3 text-sm font-semibold text-text-primary"
+          >
+            Условия демо
+          </h3>
+          <p className="max-w-3xl text-sm leading-relaxed text-text-secondary">
+            Neura доступна в бесплатном режиме: 5 генераций в день для гостей и
+            20 для аккаунтов. Лимиты сбрасываются в 00:00 UTC. Pro и Team —
+            демонстрационные тарифы; платежи и платные подписки не подключены.
+            Логотипы и отзывы на лендинге приведены как демонстрационные
+            примеры. Ответы AI могут содержать ошибки: проверьте факты и
+            пригодность текста перед публикацией.
           </p>
-        </details>
-        <div className="mt-8 flex flex-col items-center justify-between gap-5 border-t border-border pt-7 sm:flex-row">
-          <p className="text-xs text-muted">
-            © {new Date().getFullYear()} Neura. Все права защищены.
-          </p>
-          <div className="flex gap-5">
-            <a
-              href="https://x.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="X / Twitter"
-              className="text-muted transition-colors hover:text-accent"
-            >
-              <Twitter size={18} />
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="text-muted transition-colors hover:text-accent"
-            >
-              <Github size={18} />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="text-muted transition-colors hover:text-accent"
-            >
-              <Linkedin size={18} />
-            </a>
+          <div id="data-use" className="mt-6 scroll-mt-24">
+            <h3 className="mb-3 text-sm font-semibold text-text-primary">
+              Обработка данных
+            </h3>
+            <p className="max-w-3xl text-sm leading-relaxed text-text-secondary">
+              Вход и регистрация работают через Supabase Auth. Гостевая история
+              сохраняется в этом браузере, а история новых завершённых генераций
+              после входа — в Supabase для доступа с других устройств. Задача и
+              тон передаются NVIDIA NIM (openai/gpt-oss-20b) для генерации
+              ответа. Учитывайте условия обработки данных провайдерами и не
+              отправляйте конфиденциальную информацию. Для загрузки шрифта
+              браузер обращается к Google Fonts.
+            </p>
           </div>
+        </section>
+        <div className="mt-10 border-t border-white/[0.08] pt-6">
+          <p className="text-xs text-text-secondary">
+            © {new Date().getFullYear()} Neura
+          </p>
         </div>
       </div>
     </footer>

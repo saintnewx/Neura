@@ -2,30 +2,31 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import Reveal from "./Reveal";
 
+// Facts describe the currently available demo, not future paid plans.
 const FAQ_ITEMS = [
   {
     q: "Что такое Neura?",
-    a: "Neura — это AI-инструмент для генерации маркетингового контента. Он пишет посты, письма, рекламные тексты и сценарии для Reels за секунды. Ты описываешь задачу — Neura выдаёт готовый текст.",
+    a: "Neura — AI-инструмент для создания маркетингового контента: постов, писем, рекламы и сценариев Reels. Опишите задачу, выберите формат и тон. Время ответа зависит от модели, нагрузки сервиса и соединения.",
   },
   {
-    q: "Нужно ли указывать данные карты?",
-    a: "Нет. Ты можешь начать бесплатно — 10 генераций в месяц без карты. Если понравится, перейдёшь на Pro, когда сам захочешь.",
+    q: "Нужны ли регистрация и данные карты?",
+    a: "Карта не нужна. Гостям доступно 5 генераций в день, после входа в аккаунт — 20. Авторизация работает через Supabase Auth. Pro и Team пока представлены как демонстрационные тарифы: платежи и платные подписки не подключены.",
   },
   {
-    q: "Какие модели AI используются?",
-    a: "Neura работает на открытых моделях через NVIDIA NIM. Это значит, что твои данные не используются для обучения моделей, а генерация проходит быстро и стабильно.",
+    q: "Какая AI-модель используется?",
+    a: "Генерация работает через NVIDIA NIM с моделью openai/gpt-oss-20b. Задача и выбранный тон передаются сервису для получения ответа. Neura не даёт отдельных гарантий об использовании данных провайдером для обучения — перед отправкой учитывайте его условия обработки данных.",
   },
   {
-    q: "Можно ли использовать Neura для коммерческих целей?",
-    a: "Да. Всё, что ты генерируешь, принадлежит тебе. Ты можешь использовать тексты в блогах, соцсетях, рекламе — где угодно.",
+    q: "Можно ли использовать тексты для коммерческих задач?",
+    a: "Neura помогает готовить черновики для маркетинговых задач. Перед публикацией проверьте факты, соответствие требованиям площадки и возможные права третьих лиц. AI-ответ может содержать ошибки; Neura не гарантирует уникальность текста или исключительные права на него.",
   },
   {
-    q: "На каких языках работает Neura?",
-    a: "Neura понимает русский и английский. Ты можешь писать задачу на одном языке, а получить результат на другом — или на том же.",
+    q: "Сохраняется ли история генераций?",
+    a: "Да. В гостевом режиме история сохраняется в localStorage этого браузера. После входа новые завершённые генерации сохраняются в Supabase и доступны на других устройствах с тем же аккаунтом. Гостевая история автоматически в аккаунт не переносится. При ошибке сохранения готовый текст остаётся на экране, а сохранение можно повторить.",
   },
   {
-    q: "Что будет, если я исчерпаю лимит?",
-    a: "Бесплатно — 10 генераций в месяц. После этого можно подождать до следующего месяца или перейти на Pro — там лимита нет.",
+    q: "Когда обновляется дневной лимит?",
+    a: "Лимиты — 5 генераций в день для гостя и 20 для аккаунта — сбрасываются в 00:00 UTC. При исчерпании лимита вернитесь после сброса. Выбор демонстрационного Pro или Team не увеличивает квоту: оплаты пока нет. Попытка генерации может расходовать лимит даже при ошибке сервиса.",
   },
 ];
 
@@ -37,7 +38,7 @@ export default function FAQ() {
       <div className="max-w-6xl mx-auto px-6">
         <Reveal>
           <div className="max-w-3xl mb-16 md:mb-24">
-            <p className="text-label uppercase text-text-tertiary mb-4">
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-text-tertiary mb-4">
               Вопросы
             </p>
             <h2
@@ -59,37 +60,43 @@ export default function FAQ() {
             return (
               <Reveal key={item.q} delay={i * 60}>
                 <div className="border-b border-white/[0.08]">
-                  <button
-                    type="button"
-                    onClick={() => setOpen(isOpen ? null : i)}
-                    className="w-full flex items-center justify-between gap-6 py-6 text-left transition-colors duration-200 group"
-                    aria-expanded={isOpen}
-                  >
-                    <span
-                      className={`font-semibold transition-colors duration-200 ${
-                        isOpen ? "text-accent" : "text-text-primary group-hover:text-accent"
-                      }`}
-                      style={{ fontSize: "18px", lineHeight: 1.4 }}
+                  <h3>
+                    <button
+                      id={`faq-question-${i}`}
+                      type="button"
+                      onClick={() => setOpen(isOpen ? null : i)}
+                      className="min-h-11 w-full flex items-center justify-between gap-6 py-6 text-left transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 group"
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-answer-${i}`}
                     >
-                      {item.q}
-                    </span>
-                    <Plus
-                      size={20}
-                      className={`flex-shrink-0 transition-transform duration-300 ${
-                        isOpen ? "rotate-45 text-accent" : "text-text-tertiary"
-                      }`}
-                    />
-                  </button>
+                      <span
+                        className={`font-semibold transition-colors duration-200 motion-reduce:transition-none ${
+                          isOpen
+                            ? "text-accent"
+                            : "text-text-primary group-hover:text-accent"
+                        }`}
+                        style={{ fontSize: "18px", lineHeight: 1.4 }}
+                      >
+                        {item.q}
+                      </span>
+                      <Plus
+                        size={20}
+                        aria-hidden="true"
+                        className={`flex-shrink-0 text-accent transition-transform duration-200 motion-reduce:transition-none ${
+                          isOpen ? "rotate-45" : "rotate-0"
+                        }`}
+                      />
+                    </button>
+                  </h3>
 
                   <div
-                    className="overflow-hidden transition-all duration-400 ease-out"
-                    style={{
-                      maxHeight: isOpen ? "400px" : "0px",
-                      opacity: isOpen ? 1 : 0,
-                    }}
+                    id={`faq-answer-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-question-${i}`}
+                    hidden={!isOpen}
                   >
                     <p
-                      className="text-text-secondary pb-6 pr-8"
+                      className="text-text-secondary pb-6 pr-0 sm:pr-8"
                       style={{ fontSize: "16px", lineHeight: 1.7 }}
                     >
                       {item.a}

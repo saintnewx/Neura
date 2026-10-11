@@ -176,6 +176,7 @@ export default function AppPage() {
           onLimitReached={workspace.openLimit}
           onBusyChange={setGeneratorBusy}
           selectedGeneration={restored}
+          usage={workspace.usage}
         />
         {/* Browsable history restores the prompt, format, tone, and generated text. */}
         <section

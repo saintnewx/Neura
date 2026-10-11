@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import SocialProof from "../components/SocialProof";
@@ -17,6 +17,7 @@ export default function Landing() {
   const pageRef = useRef<HTMLDivElement>(null);
   const { user, loading } = useAuth();
   const workspace = useWorkspace(user, loading);
+  const [, setGeneratorBusy] = useState(false);
 
   return (
     <div ref={pageRef}>
@@ -37,6 +38,13 @@ export default function Landing() {
             key={user?.id ?? "guest"}
             onBeforeGenerate={workspace.beforeGenerate}
             onGenerated={workspace.saveGeneration}
+            onUsage={workspace.updateUsage}
+            onLimitReached={workspace.openLimit}
+            onBusyChange={setGeneratorBusy}
+            selectedGeneration={null}
+            disabled={loading || workspace.historyLoading}
+            variant="landing"
+            usage={workspace.usage}
           />
         </Reveal>
 

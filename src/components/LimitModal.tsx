@@ -85,7 +85,7 @@ export default function LimitModal({ open, onClose }: LimitModalProps) {
           id={titleId}
           className="pr-2 text-2xl font-[590] leading-snug sm:text-3xl"
         >
-          Лимит исчерпан. Оформите Pro или вернитесь завтра
+          Лимит исчерпан. Вернитесь завтра
         </h2>
         <p
           id={descriptionId}

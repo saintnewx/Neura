@@ -23,7 +23,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-import DemoSection from "../components/DemoSection";
+import DemoSection, { stripTemplateSuffix } from "../components/DemoSection";
 import type { WorkspaceTemplate } from "../components/DemoSection";
 import LimitModal from "../components/LimitModal";
 import { useAuth } from "../hooks/useAuth";
@@ -392,7 +392,7 @@ export default function AppPage() {
                 className={`min-h-11 w-full min-w-0 rounded-2xl border p-4 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${restored?.id === record.id ? "border-accent/40 bg-accent/5" : "border-white/[0.08] bg-white/[0.03] hover:border-accent/30"}`}
               >
                 <span className="mb-2 line-clamp-2 block break-words text-sm font-medium text-text-primary">
-                  {record.task}
+                  {stripTemplateSuffix(record.task)}
                 </span>
                 <span className="flex flex-wrap items-center justify-between gap-2 text-xs text-text-secondary">
                   <span>{record.type}</span>

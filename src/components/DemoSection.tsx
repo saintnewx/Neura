@@ -31,9 +31,16 @@ const WORKSPACE_TONES = [
 // Only replace our own trailing template block when composing a new request.
 // Replays use lastRequest verbatim, including the saved requirements.
 const TEMPLATE_SUFFIX =
-  /\n\n\[NEURA_TEMPLATE:[a-z0-9-]+\]\n[\s\S]*?\n\[\/NEURA_TEMPLATE\]$/;
+  /\n\n\[NEURA_TEMPLATE:[a-z0-9-]+\]\n((?:(?!\[\/?NEURA_TEMPLATE(?::|\]))[\s\S])+)\n\[\/NEURA_TEMPLATE\]$/;
+
+// Presentation only: keep ordinary text, malformed blocks, and legacy tasks intact.
+export function stripTemplateSuffix(task: string): string {
+  return task.replace(TEMPLATE_SUFFIX, (suffix, instruction: string) =>
+    instruction.trim() ? "" : suffix,
+  );
+}
 function withTemplate(task: string, template: WorkspaceTemplate): string {
-  const original = task.trim().replace(TEMPLATE_SUFFIX, "");
+  const original = stripTemplateSuffix(task.trim());
   return `${original}\n\n[NEURA_TEMPLATE:${template.id}]\n${template.instruction}\n[/NEURA_TEMPLATE]`;
 }
 
@@ -114,7 +121,7 @@ export default function DemoSection({
     busyCallback.current(false);
     const { task, type, tone, result } = selectedGeneration;
     lastRequest.current = { task, type, tone };
-    setTask(task);
+    setTask(stripTemplateSuffix(task));
     setType(type);
     setTone(tone);
     setResult(result);

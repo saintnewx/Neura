@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
+  ArrowRight,
+  Instagram,
+  Send,
+  Mail,
+  Heading,
+  Megaphone,
+  CalendarDays,
+  Search,
+  UserRound,
+  Tags,
+  Clapperboard,
+  Package,
+  FileText,
   Cloud,
   History,
   LogIn,
@@ -10,10 +23,141 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import DemoSection from "../components/DemoSection";
+import type { WorkspaceTemplate } from "../components/DemoSection";
 import LimitModal from "../components/LimitModal";
 import { useAuth } from "../hooks/useAuth";
 import { useWorkspace } from "../hooks/useWorkspace";
 import type { GenerationRecord } from "../lib/history";
+
+// Catalog formats match the four existing API/DB content types.
+const TEMPLATES = [
+  {
+    id: "instagram-post",
+    name: "Instagram Post",
+    description: "Пост с зацепкой и призывом к действию.",
+    type: "Пост",
+    icon: Instagram,
+    instruction:
+      "Создай пост для Instagram: сильная первая строка, короткие абзацы, конкретная польза и один призыв к действию. Добавь до трёх уместных хештегов. Не выдумывай факты.",
+    placeholder: "Расскажите о бренде, теме поста и аудитории Instagram...",
+  },
+  {
+    id: "telegram-announcement",
+    name: "Telegram Announcement",
+    description: "Ясный анонс для Telegram-канала.",
+    type: "Пост",
+    icon: Send,
+    instruction:
+      "Подготовь анонс для Telegram: ёмкий заголовок, что произойдёт и кому это полезно, затем один следующий шаг. Используй дату и ссылку только если они указаны в задаче.",
+    placeholder:
+      "Что вы анонсируете в Telegram? Укажите детали и следующий шаг...",
+  },
+  {
+    id: "email-campaign",
+    name: "Email Campaign",
+    description: "Тема, прехедер и текст письма.",
+    type: "Email",
+    icon: Mail,
+    instruction:
+      "Напиши email-кампанию: тему письма, прехедер и основной текст с одним CTA. Начни с потребности читателя, покажи пользу предложения. Не используй ложную срочность.",
+    placeholder:
+      "Кому отправляем письмо, какое предложение и что должен сделать читатель?...",
+  },
+  {
+    id: "landing-headline",
+    name: "Landing Headline",
+    description: "Первый экран с ясной ценностью.",
+    type: "Реклама",
+    icon: Heading,
+    instruction:
+      "Создай первый экран лендинга: три варианта заголовка, один подзаголовок и текст CTA-кнопки. Сформулируй пользу продукта для указанной аудитории без неподтверждённых обещаний.",
+    placeholder:
+      "Опишите продукт, аудиторию и ключевую пользу для первого экрана...",
+  },
+  {
+    id: "ad-copy",
+    name: "Ad Copy",
+    description: "Короткие варианты рекламного текста.",
+    type: "Реклама",
+    icon: Megaphone,
+    instruction:
+      "Создай три коротких рекламных объявления с разными зацепками. Для каждого дай заголовок, основной текст и CTA. Опирайся на факты задачи, без выдуманных скидок или гарантий.",
+    placeholder: "Что рекламируем, кому и на какой площадке?...",
+  },
+  {
+    id: "content-plan",
+    name: "Content Plan",
+    description: "Темы и форматы на семь дней.",
+    type: "Пост",
+    icon: CalendarDays,
+    instruction:
+      "Составь контент-план на семь дней: для каждого дня укажи тему, формат, основную мысль и цель публикации. Чередуй образовательные, вовлекающие и продающие материалы.",
+    placeholder:
+      "Опишите нишу, аудиторию и цель контента на ближайшую неделю...",
+  },
+  {
+    id: "seo-description",
+    name: "SEO Description",
+    description: "Метаописание страницы для поиска.",
+    type: "Пост",
+    icon: Search,
+    instruction:
+      "Подготовь три варианта SEO meta description примерно по 140–160 символов. Естественно включи заданное ключевое слово и пользу страницы. Не добавляй факты, которых нет в задаче.",
+    placeholder:
+      "О чём страница? Укажите ключевое слово и её основную пользу...",
+  },
+  {
+    id: "brand-bio",
+    name: "Brand Bio",
+    description: "Краткое позиционирование бренда.",
+    type: "Пост",
+    icon: UserRound,
+    instruction:
+      "Напиши три кратких варианта bio бренда: кто вы, для кого работаете и чем полезны. Сделай формулировки компактными для профиля в соцсетях. Не выдумывай достижения.",
+    placeholder: "Кто вы, кому помогаете и в чём особенность бренда?...",
+  },
+  {
+    id: "offer-text",
+    name: "Offer Text",
+    description: "Предложение с понятными условиями.",
+    type: "Реклама",
+    icon: Tags,
+    instruction:
+      "Сформулируй оффер: для кого предложение, конкретная польза, что входит, условия и следующий шаг. Если цена или сроки не заданы, не придумывай их. Не обещай гарантированный результат.",
+    placeholder: "Опишите предложение, его пользу и известные условия...",
+  },
+  {
+    id: "reels-script",
+    name: "Reels Script",
+    description: "Сценарий короткого вертикального видео.",
+    type: "Reels",
+    icon: Clapperboard,
+    instruction:
+      "Напиши сценарий Reels на 30 секунд: зацепка в первые три секунды, последовательность сцен с примерным таймингом, текст в кадре и финальный CTA. Сценарий должен быть удобен для съёмки.",
+    placeholder: "О чём Reels, кто зритель и какое действие ожидается?...",
+  },
+  {
+    id: "product-description",
+    name: "Product Description",
+    description: "Описание товара через пользу.",
+    type: "Реклама",
+    icon: Package,
+    instruction:
+      "Создай описание товара: короткое вступление, характеристики из задачи, польза каждой характеристики и CTA. Не выдумывай состав, сертификаты, размеры или свойства товара.",
+    placeholder: "Опишите товар, реальные характеристики и покупателя...",
+  },
+  {
+    id: "case-study",
+    name: "Case Study",
+    description: "Кейс: задача, подход и результат.",
+    type: "Пост",
+    icon: FileText,
+    instruction:
+      "Подготовь кейс по структуре: исходная задача, ограничения, решение, результат и вывод. Используй только предоставленные цифры. Если результатов нет, обозначь, каких данных не хватает, не выдумывай метрики.",
+    placeholder:
+      "Расскажите о задаче клиента, решении и подтверждённых результатах...",
+  },
+] satisfies readonly WorkspaceTemplate[];
 
 // The workspace keeps guest history local and signed-in history private in Supabase.
 export default function AppPage() {
@@ -23,16 +167,20 @@ export default function AppPage() {
   const workspace = useWorkspace(user, loading);
   const [selectedGeneration, setSelectedGeneration] =
     useState<GenerationRecord | null>(null);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<WorkspaceTemplate | null>(null);
   const [signOutError, setSignOutError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
   const [generatorBusy, setGeneratorBusy] = useState(false);
   const account = user?.id ?? "guest";
   const email = user?.email || "Ваш аккаунт";
+  const greetingName = user?.email?.split("@")[0] || "";
   const initial = user?.email?.charAt(0).toUpperCase() || "N";
 
   // Restored content cannot carry over to a different authenticated account.
   useEffect(() => {
     setSelectedGeneration(null);
+    setSelectedTemplate(null);
     setGeneratorBusy(false);
     setSignOutError("");
   }, [account]);
@@ -126,8 +274,8 @@ export default function AppPage() {
             <Sparkles size={14} className="text-accent" />
             Ваша рабочая область
           </p>
-          <h1 className="text-4xl font-[590] leading-tight sm:text-5xl lg:text-[80px]">
-            Начнём с идеи.
+          <h1 className="text-[clamp(32px,5vw,72px)] font-bold leading-tight tracking-tight break-words">
+            {greetingName ? `Привет, ${greetingName}` : "Привет"}
           </h1>
           <p className="mt-4 text-lg font-[510] text-muted">
             Опишите задачу — найдём для неё нужные слова.
@@ -156,6 +304,71 @@ export default function AppPage() {
             </Link>
           </div>
         )}
+        {/* Picking a template configures the editor without generation or quota use. */}
+        <section aria-labelledby="templates-heading" className="mb-8">
+          <h2
+            id="templates-heading"
+            className="mb-2 text-2xl font-semibold text-text-primary"
+          >
+            Шаблоны
+          </h2>
+          <p className="mb-5 text-sm text-text-secondary">
+            Выберите формат задачи, затем добавьте свои детали.
+          </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {TEMPLATES.map((template) => {
+              const Icon = template.icon;
+              const active = selectedTemplate?.id === template.id;
+              return (
+                <button
+                  key={template.id}
+                  type="button"
+                  disabled={
+                    generatorBusy ||
+                    loading ||
+                    signingOut ||
+                    workspace.historyLoading
+                  }
+                  aria-pressed={active}
+                  onClick={() => {
+                    if (
+                      generatorBusy ||
+                      loading ||
+                      signingOut ||
+                      workspace.historyLoading
+                    )
+                      return;
+                    setSelectedGeneration(null);
+                    setSelectedTemplate(template);
+                  }}
+                  className={`flex min-h-11 w-full min-w-0 items-start gap-3 rounded-2xl border bg-white/[0.03] p-5 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${active ? "border-accent" : "border-white/[0.08] hover:border-accent/30"}`}
+                >
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${active ? "bg-accent/20 text-accent" : "bg-white/5 text-text-secondary"}`}
+                  >
+                    <Icon size={20} aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className={`block text-[15px] font-semibold ${active ? "text-accent" : "text-text-primary"}`}
+                    >
+                      {template.name}
+                    </span>
+                    <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
+                      {template.description}
+                    </span>
+                  </span>
+                  <ArrowRight
+                    size={16}
+                    aria-hidden="true"
+                    className="mt-1 shrink-0 text-text-secondary"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
         <p role="status" className="mb-5 text-sm text-muted">
           {loading || workspace.historyLoading ? (
             "Загружаем рабочую область…"
@@ -177,6 +390,8 @@ export default function AppPage() {
           onBusyChange={setGeneratorBusy}
           selectedGeneration={restored}
           usage={workspace.usage}
+          selectedTemplate={selectedTemplate}
+          onTemplateReset={() => setSelectedTemplate(null)}
         />
         {/* Browsable history restores the prompt, format, tone, and generated text. */}
         <section
@@ -237,7 +452,10 @@ export default function AppPage() {
                 <li key={record.id}>
                   <button
                     type="button"
-                    onClick={() => setSelectedGeneration({ ...record })}
+                    onClick={() => {
+                      setSelectedTemplate(null);
+                      setSelectedGeneration({ ...record });
+                    }}
                     disabled={generatorBusy || loading}
                     aria-pressed={restored?.id === record.id}
                     className={`w-full rounded-xl border bg-card p-5 text-left transition-[transform,opacity] duration-150 ease-out hover:scale-[1.01] hover:border-border-hover disabled:scale-100 disabled:opacity-50 ${restored?.id === record.id ? "border-accent/50" : "border-border"}`}

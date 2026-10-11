@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,6 +16,7 @@ import {
   FileText,
   Cloud,
   History,
+  X,
   LogIn,
   LogOut,
   RefreshCw,
@@ -172,6 +173,12 @@ export default function AppPage() {
   const [signOutError, setSignOutError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
   const [generatorBusy, setGeneratorBusy] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [showAllHistory, setShowAllHistory] = useState(false);
+  const mobileHistoryOpen = historyOpen && !workspace.limitOpen;
+  const historyTrigger = useRef<HTMLButtonElement>(null);
+  const historyPanel = useRef<HTMLDivElement>(null);
+  const historyClose = useRef<HTMLButtonElement>(null);
   const account = user?.id ?? "guest";
   const email = user?.email || "Ваш аккаунт";
   const greetingName = user?.email?.split("@")[0] || "";
@@ -183,7 +190,90 @@ export default function AppPage() {
     setSelectedTemplate(null);
     setGeneratorBusy(false);
     setSignOutError("");
+    setHistoryOpen(false);
+    setShowAllHistory(false);
   }, [account]);
+
+  // Keep just one modal active if a generation opens the daily-limit dialog.
+  useEffect(() => {
+    if (workspace.limitOpen) setHistoryOpen(false);
+  }, [workspace.limitOpen]);
+
+  // Mobile dialog owns focus and freezes the page, including iOS scroll position.
+  useEffect(() => {
+    if (!mobileHistoryOpen) return;
+    const body = document.body;
+    const html = document.documentElement;
+    const scrollY = window.scrollY;
+    const previousBody = {
+      overflow: body.style.overflow,
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+    };
+    const previousHtmlOverflow = html.style.overflow;
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    html.style.overflow = "hidden";
+    historyClose.current?.focus();
+
+    function focusableControls(): HTMLElement[] {
+      return Array.from(
+        historyPanel.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]),a[href],[tabindex="0"]',
+        ) ?? [],
+      );
+    }
+    function keydown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setHistoryOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const controls = focusableControls();
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (!first || !last) {
+        event.preventDefault();
+        historyPanel.current?.focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    function keepFocus(event: FocusEvent) {
+      if (
+        event.target instanceof Node &&
+        !historyPanel.current?.contains(event.target)
+      ) {
+        historyClose.current?.focus();
+      }
+    }
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    function closeOnDesktop() {
+      if (desktop.matches) setHistoryOpen(false);
+    }
+    closeOnDesktop();
+    desktop.addEventListener("change", closeOnDesktop);
+    document.addEventListener("keydown", keydown);
+    document.addEventListener("focusin", keepFocus);
+    return () => {
+      desktop.removeEventListener("change", closeOnDesktop);
+      document.removeEventListener("keydown", keydown);
+      document.removeEventListener("focusin", keepFocus);
+      Object.assign(body.style, previousBody);
+      html.style.overflow = previousHtmlOverflow;
+      window.scrollTo({ top: scrollY, behavior: "instant" });
+      if (historyTrigger.current?.isConnected)
+        historyTrigger.current.focus({ preventScroll: true });
+    };
+  }, [mobileHistoryOpen]);
 
   async function handleSignOut() {
     setSigningOut(true);
@@ -205,288 +295,365 @@ export default function AppPage() {
     selectedGeneration?.user_id === (user?.id ?? null)
       ? selectedGeneration
       : null;
-  return (
-    <div className="hero-glow min-h-screen font-[510]">
-      {/* Compact navigation and account controls. */}
-      <header className="border-b border-border">
-        <div className="container-page flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
-          <div className="flex items-center gap-6">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
-            >
-              <ArrowLeft size={18} />
-              <span className="hidden sm:inline">Назад</span>
-              <span className="sr-only sm:hidden">На главную</span>
-            </Link>
-            <Link to="/" className="text-xl font-extrabold tracking-tight">
-              Neura<span className="text-accent">.</span>
-            </Link>
-          </div>
-          {loading ? (
-            <span role="status" className="text-xs text-muted">
-              Проверяем вход…
-            </span>
-          ) : user ? (
-            <div className="flex min-w-0 max-w-full items-center gap-3">
-              <span
-                title={email}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-xs text-accent"
-                aria-label={`Аккаунт: ${email}`}
-              >
-                {initial}
-              </span>
-              <span className="min-w-0 max-w-36 truncate text-sm text-muted sm:max-w-56">
-                {email}
-              </span>
-              <button
-                type="button"
-                onClick={() => void handleSignOut()}
-                disabled={signingOut}
-                className="btn-secondary min-h-10 shrink-0 px-3 py-2 text-sm"
-              >
-                <LogOut size={16} />
-                {signingOut ? "Выходим…" : "Выйти"}
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/auth"
-              className="btn-secondary min-h-10 px-4 py-2 text-sm"
-            >
-              <LogIn size={16} />
-              Войти
-            </Link>
-          )}
-        </div>
-      </header>
-      <main className="container-page py-12 sm:py-16">
-        {(authError || signOutError) && (
-          <p
-            role="alert"
-            className="mb-6 rounded-xl border border-error/30 bg-card px-4 py-3 text-sm text-error"
-          >
-            {signOutError || authError}
-          </p>
-        )}
-        <div className="mb-9">
-          <p className="eyebrow mb-4 flex items-center gap-2">
-            <Sparkles size={14} className="text-accent" />
-            Ваша рабочая область
-          </p>
-          <h1 className="text-[clamp(32px,5vw,72px)] font-bold leading-tight tracking-tight break-words">
-            {greetingName ? `Привет, ${greetingName}` : "Привет"}
-          </h1>
-          <p className="mt-4 text-lg font-[510] text-muted">
-            Опишите задачу — найдём для неё нужные слова.
-          </p>
-          {(plan === "pro" || plan === "team") && (
-            <p
-              role="status"
-              className="mt-4 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 text-sm text-muted"
-            >
-              Вы выбрали {plan === "pro" ? "Pro" : "Team"}. Сейчас доступен
-              бесплатный план — платные подписки ещё не подключены.
-            </p>
-          )}
-        </div>
-        {!loading && !user && (
-          <div className="glass-strong mb-6 flex flex-col gap-4 rounded-xl border border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="flex items-center gap-3 text-sm text-muted">
-              <Cloud size={20} className="shrink-0 text-accent" />
-              Войдите, чтобы сохранять историю на всех устройствах
-            </p>
-            <Link
-              to="/auth"
-              className="shrink-0 text-sm text-accent hover:underline"
-            >
-              Войти или зарегистрироваться →
-            </Link>
-          </div>
-        )}
-        {/* Picking a template configures the editor without generation or quota use. */}
-        <section aria-labelledby="templates-heading" className="mb-8">
-          <h2
-            id="templates-heading"
-            className="mb-2 text-2xl font-semibold text-text-primary"
-          >
-            Шаблоны
-          </h2>
-          <p className="mb-5 text-sm text-text-secondary">
-            Выберите формат задачи, затем добавьте свои детали.
-          </p>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {TEMPLATES.map((template) => {
-              const Icon = template.icon;
-              const active = selectedTemplate?.id === template.id;
-              return (
-                <button
-                  key={template.id}
-                  type="button"
-                  disabled={
-                    generatorBusy ||
-                    loading ||
-                    signingOut ||
-                    workspace.historyLoading
-                  }
-                  aria-pressed={active}
-                  onClick={() => {
-                    if (
-                      generatorBusy ||
-                      loading ||
-                      signingOut ||
-                      workspace.historyLoading
-                    )
-                      return;
-                    setSelectedGeneration(null);
-                    setSelectedTemplate(template);
-                  }}
-                  className={`flex min-h-11 w-full min-w-0 items-start gap-3 rounded-2xl border bg-white/[0.03] p-5 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${active ? "border-accent" : "border-white/[0.08] hover:border-accent/30"}`}
-                >
-                  <span
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${active ? "bg-accent/20 text-accent" : "bg-white/5 text-text-secondary"}`}
-                  >
-                    <Icon size={20} aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span
-                      className={`block text-[15px] font-semibold ${active ? "text-accent" : "text-text-primary"}`}
-                    >
-                      {template.name}
-                    </span>
-                    <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
-                      {template.description}
-                    </span>
-                  </span>
-                  <ArrowRight
-                    size={16}
-                    aria-hidden="true"
-                    className="mt-1 shrink-0 text-text-secondary"
-                  />
-                </button>
-              );
-            })}
-          </div>
-        </section>
+  const visibleRecords = showAllHistory
+    ? workspace.records
+    : workspace.records.slice(0, 5);
+  const historyDisabled =
+    generatorBusy || loading || signingOut || workspace.historyLoading;
 
-        <p role="status" className="mb-5 text-sm text-muted">
-          {loading || workspace.historyLoading ? (
-            "Загружаем рабочую область…"
-          ) : (
-            <>
-              {workspace.usage.used} из {workspace.usage.limit} генераций
-              сегодня · {user ? "облачная история" : "история в этом браузере"}
-            </>
-          )}
-        </p>
-        <DemoSection
-          key={account}
-          variant="workspace"
-          disabled={loading || signingOut || workspace.historyLoading}
-          onBeforeGenerate={workspace.beforeGenerate}
-          onGenerated={workspace.saveGeneration}
-          onUsage={workspace.updateUsage}
-          onLimitReached={workspace.openLimit}
-          onBusyChange={setGeneratorBusy}
-          selectedGeneration={restored}
-          usage={workspace.usage}
-          selectedTemplate={selectedTemplate}
-          onTemplateReset={() => setSelectedTemplate(null)}
-        />
-        {/* Browsable history restores the prompt, format, tone, and generated text. */}
-        <section
-          aria-labelledby="history-heading"
-          className="mt-12 border-t border-border pt-10"
-        >
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <h2
-              id="history-heading"
-              className="flex items-center gap-3 text-2xl font-[590] sm:text-3xl"
-            >
-              <History size={24} className="text-muted" />
-              История генераций
-            </h2>
+  function selectHistory(record: GenerationRecord) {
+    if (historyDisabled) return;
+    setSelectedTemplate(null);
+    setSelectedGeneration({ ...record });
+    setHistoryOpen(false);
+  }
+
+  // Desktop and mobile share one rendering path and the same workspace records.
+  function renderHistory(mobile: boolean) {
+    const headingId = mobile
+      ? "mobile-history-heading"
+      : "desktop-history-heading";
+    const listId = mobile
+      ? "mobile-history-records"
+      : "desktop-history-records";
+    return (
+      <>
+        <div className="mb-4 flex items-start justify-between gap-2">
+          <h2
+            id={headingId}
+            className="min-w-0 text-lg font-semibold leading-snug text-text-primary"
+          >
+            Последние генерации
+          </h2>
+          <div className="flex shrink-0 gap-1">
             <button
               type="button"
               onClick={workspace.reloadHistory}
               disabled={workspace.historyLoading || loading || generatorBusy}
-              className="rounded-lg p-2 text-muted hover:text-accent disabled:opacity-40"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] text-text-secondary hover:text-accent disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
               aria-label="Обновить историю"
             >
-              <RefreshCw size={18} />
+              <RefreshCw size={18} aria-hidden="true" />
             </button>
+            {mobile && (
+              <button
+                ref={historyClose}
+                type="button"
+                onClick={() => setHistoryOpen(false)}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                aria-label="Закрыть историю"
+              >
+                <X size={20} aria-hidden="true" />
+              </button>
+            )}
           </div>
-          {workspace.historyError && (
-            <div
-              role="alert"
-              className="mb-5 rounded-xl border border-error/30 bg-card p-4 text-sm"
+        </div>
+        <p className="mb-5 text-xs text-text-secondary">
+          {user ? "Облачная история" : "История в этом браузере"}
+        </p>
+        {workspace.historyError && (
+          <div
+            role="alert"
+            className="mb-4 rounded-2xl border border-error/30 bg-white/[0.03] p-4 text-sm"
+          >
+            <p className="break-words text-error">{workspace.historyError}</p>
+            {!!workspace.pendingCount && (
+              <button
+                type="button"
+                onClick={() => void workspace.retrySave()}
+                disabled={workspace.saving}
+                className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/[0.08] px-3 py-2 text-text-primary disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                <RefreshCw size={15} aria-hidden="true" />
+                {workspace.saving ? "Сохраняем…" : "Повторить сохранение"}
+              </button>
+            )}
+          </div>
+        )}
+        {workspace.historyLoading && (
+          <p role="status" className="mb-4 py-2 text-sm text-text-secondary">
+            Загружаем историю…
+          </p>
+        )}
+        {!workspace.historyLoading && !workspace.records.length && (
+          <p className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 text-sm leading-relaxed text-text-secondary">
+            Здесь появятся ваши готовые тексты. Выберите запись, чтобы вернуться
+            к ней.
+          </p>
+        )}
+        <ul id={listId} className="space-y-3">
+          {visibleRecords.map((record) => (
+            <li key={record.id}>
+              <button
+                type="button"
+                onClick={() => selectHistory(record)}
+                disabled={historyDisabled}
+                aria-pressed={restored?.id === record.id}
+                className={`min-h-11 w-full min-w-0 rounded-2xl border p-4 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${restored?.id === record.id ? "border-accent/40 bg-accent/5" : "border-white/[0.08] bg-white/[0.03] hover:border-accent/30"}`}
+              >
+                <span className="mb-2 line-clamp-2 block break-words text-sm font-medium text-text-primary">
+                  {record.task}
+                </span>
+                <span className="flex flex-wrap items-center justify-between gap-2 text-xs text-text-secondary">
+                  <span>{record.type}</span>
+                  <time dateTime={record.created_at}>
+                    {new Date(record.created_at).toLocaleString("ru-RU", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })}
+                  </time>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {workspace.records.length > 5 && (
+          <button
+            type="button"
+            onClick={() => setShowAllHistory((value) => !value)}
+            aria-expanded={showAllHistory}
+            aria-controls={listId}
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-white/[0.08] px-4 py-2 text-sm text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+          >
+            {showAllHistory
+              ? "Последние 5"
+              : `Все записи (${workspace.records.length})`}
+          </button>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div className="hero-glow min-h-screen font-[510]">
+      <div aria-hidden={mobileHistoryOpen || undefined}>
+        {/* Compact navigation and account controls. */}
+        <header className="border-b border-border">
+          <div className="container-page flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
+            <div className="flex items-center gap-6">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
+              >
+                <ArrowLeft size={18} />
+                <span className="hidden sm:inline">Назад</span>
+                <span className="sr-only sm:hidden">На главную</span>
+              </Link>
+              <Link to="/" className="text-xl font-extrabold tracking-tight">
+                Neura<span className="text-accent">.</span>
+              </Link>
+            </div>
+            <button
+              ref={historyTrigger}
+              type="button"
+              onClick={() => setHistoryOpen(true)}
+              aria-haspopup="dialog"
+              aria-expanded={mobileHistoryOpen}
+              aria-controls="mobile-history-panel"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/[0.08] px-3 py-2 text-sm text-text-primary xl:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
             >
-              <p className="break-words text-error">{workspace.historyError}</p>
-              {!!workspace.pendingCount && (
+              <History size={18} aria-hidden="true" />
+              История
+            </button>
+            {loading ? (
+              <span role="status" className="text-xs text-muted">
+                Проверяем вход…
+              </span>
+            ) : user ? (
+              <div className="flex min-w-0 max-w-full items-center gap-3">
+                <span
+                  title={email}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-xs text-accent"
+                  aria-label={`Аккаунт: ${email}`}
+                >
+                  {initial}
+                </span>
+                <span className="min-w-0 max-w-36 truncate text-sm text-muted sm:max-w-56">
+                  {email}
+                </span>
                 <button
                   type="button"
-                  onClick={() => void workspace.retrySave()}
-                  disabled={workspace.saving}
-                  className="btn-secondary mt-3 min-h-10 px-4 py-2 text-sm"
+                  onClick={() => void handleSignOut()}
+                  disabled={signingOut}
+                  className="btn-secondary min-h-10 shrink-0 px-3 py-2 text-sm"
                 >
-                  <RefreshCw size={15} />
-                  {workspace.saving ? "Сохраняем…" : "Повторить сохранение"}
+                  <LogOut size={16} />
+                  {signingOut ? "Выходим…" : "Выйти"}
                 </button>
-              )}
+              </div>
+            ) : (
+              <Link
+                to="/auth"
+                className="btn-secondary min-h-10 px-4 py-2 text-sm"
+              >
+                <LogIn size={16} />
+                Войти
+              </Link>
+            )}
+          </div>
+        </header>
+        <main className="container-page py-12 sm:py-16">
+          {(authError || signOutError) && (
+            <p
+              role="alert"
+              className="mb-6 rounded-xl border border-error/30 bg-card px-4 py-3 text-sm text-error"
+            >
+              {signOutError || authError}
+            </p>
+          )}
+          <div className="mb-9">
+            <p className="eyebrow mb-4 flex items-center gap-2">
+              <Sparkles size={14} className="text-accent" />
+              Ваша рабочая область
+            </p>
+            <h1 className="text-[clamp(32px,5vw,72px)] font-bold leading-tight tracking-tight break-words">
+              {greetingName ? `Привет, ${greetingName}` : "Привет"}
+            </h1>
+            <p className="mt-4 text-lg font-[510] text-muted">
+              Опишите задачу — найдём для неё нужные слова.
+            </p>
+            {(plan === "pro" || plan === "team") && (
+              <p
+                role="status"
+                className="mt-4 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 text-sm text-muted"
+              >
+                Вы выбрали {plan === "pro" ? "Pro" : "Team"}. Сейчас доступен
+                бесплатный план — платные подписки ещё не подключены.
+              </p>
+            )}
+          </div>
+          {!loading && !user && (
+            <div className="glass-strong mb-6 flex flex-col gap-4 rounded-xl border border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="flex items-center gap-3 text-sm text-muted">
+                <Cloud size={20} className="shrink-0 text-accent" />
+                Войдите, чтобы сохранять историю на всех устройствах
+              </p>
+              <Link
+                to="/auth"
+                className="shrink-0 text-sm text-accent hover:underline"
+              >
+                Войти или зарегистрироваться →
+              </Link>
             </div>
           )}
-          {workspace.historyLoading && (
-            <p role="status" className="py-4 text-sm text-muted">
-              Загружаем историю…
+          {/* Picking a template configures the editor without generation or quota use. */}
+          <section aria-labelledby="templates-heading" className="mb-8">
+            <h2
+              id="templates-heading"
+              className="mb-2 text-2xl font-semibold text-text-primary"
+            >
+              Шаблоны
+            </h2>
+            <p className="mb-5 text-sm text-text-secondary">
+              Выберите формат задачи, затем добавьте свои детали.
             </p>
-          )}
-          {!workspace.historyLoading && !workspace.records.length && (
-            <p className="glass-strong rounded-xl border border-border px-6 py-8 text-center text-base text-muted">
-              Здесь появятся ваши готовые тексты. Выберите запись, чтобы
-              вернуться к ней.
-            </p>
-          )}
-          {!!workspace.records.length && (
-            <ul className="grid gap-3 md:grid-cols-2">
-              {workspace.records.map((record) => (
-                <li key={record.id}>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {TEMPLATES.map((template) => {
+                const Icon = template.icon;
+                const active = selectedTemplate?.id === template.id;
+                return (
                   <button
+                    key={template.id}
                     type="button"
+                    disabled={
+                      generatorBusy ||
+                      loading ||
+                      signingOut ||
+                      workspace.historyLoading
+                    }
+                    aria-pressed={active}
                     onClick={() => {
-                      setSelectedTemplate(null);
-                      setSelectedGeneration({ ...record });
+                      if (
+                        generatorBusy ||
+                        loading ||
+                        signingOut ||
+                        workspace.historyLoading
+                      )
+                        return;
+                      setSelectedGeneration(null);
+                      setSelectedTemplate(template);
                     }}
-                    disabled={generatorBusy || loading}
-                    aria-pressed={restored?.id === record.id}
-                    className={`w-full rounded-xl border bg-card p-5 text-left transition-[transform,opacity] duration-150 ease-out hover:scale-[1.01] hover:border-border-hover disabled:scale-100 disabled:opacity-50 ${restored?.id === record.id ? "border-accent/50" : "border-border"}`}
+                    className={`flex min-h-11 w-full min-w-0 items-start gap-3 rounded-2xl border bg-white/[0.03] p-5 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${active ? "border-accent" : "border-white/[0.08] hover:border-accent/30"}`}
                   >
-                    <span className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-                      <span>
-                        {record.type} · {record.tone}
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${active ? "bg-accent/20 text-accent" : "bg-white/5 text-text-secondary"}`}
+                    >
+                      <Icon size={20} aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={`block text-[15px] font-semibold ${active ? "text-accent" : "text-text-primary"}`}
+                      >
+                        {template.name}
                       </span>
-                      <time dateTime={record.created_at}>
-                        {new Date(record.created_at).toLocaleString("ru-RU", {
-                          dateStyle: "short",
-                          timeStyle: "short",
-                        })}
-                      </time>
+                      <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
+                        {template.description}
+                      </span>
                     </span>
-                    <span className="line-clamp-1 block text-base font-[590]">
-                      {record.task}
-                    </span>
-                    <span className="mt-2 line-clamp-2 block text-sm leading-relaxed text-muted">
-                      {record.result}
-                    </span>
+                    <ArrowRight
+                      size={16}
+                      aria-hidden="true"
+                      className="mt-1 shrink-0 text-text-secondary"
+                    />
                   </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </main>
-      <footer className="container-page pb-8 text-xs text-muted">
-        © {new Date().getFullYear()} Neura · Больше идей. Меньше рутины.
-      </footer>
+                );
+              })}
+            </div>
+          </section>
+
+          <p role="status" className="mb-5 text-sm text-muted">
+            {loading || workspace.historyLoading ? (
+              "Загружаем рабочую область…"
+            ) : (
+              <>
+                {workspace.usage.used} из {workspace.usage.limit} генераций
+                сегодня ·{" "}
+                {user ? "облачная история" : "история в этом браузере"}
+              </>
+            )}
+          </p>
+          <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="min-w-0">
+              <DemoSection
+                key={account}
+                variant="workspace"
+                disabled={loading || signingOut || workspace.historyLoading}
+                onBeforeGenerate={workspace.beforeGenerate}
+                onGenerated={workspace.saveGeneration}
+                onUsage={workspace.updateUsage}
+                onLimitReached={workspace.openLimit}
+                onBusyChange={setGeneratorBusy}
+                selectedGeneration={restored}
+                usage={workspace.usage}
+                selectedTemplate={selectedTemplate}
+                onTemplateReset={() => setSelectedTemplate(null)}
+              />
+            </div>
+            <aside
+              aria-labelledby="desktop-history-heading"
+              className="hidden min-w-0 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 xl:sticky xl:top-6 xl:block xl:max-h-[calc(100dvh-3rem)] xl:overflow-y-auto xl:overscroll-contain"
+            >
+              {renderHistory(false)}
+            </aside>
+          </div>
+        </main>
+        <footer className="container-page pb-8 text-xs text-muted">
+          © {new Date().getFullYear()} Neura · Больше идей. Меньше рутины.
+        </footer>
+      </div>
+      {mobileHistoryOpen && (
+        <div
+          ref={historyPanel}
+          id="mobile-history-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-history-heading"
+          tabIndex={-1}
+          className="fixed inset-0 z-[90] overflow-y-auto overscroll-contain bg-bg-base px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] motion-reduce:transition-none xl:hidden"
+        >
+          {renderHistory(true)}
+        </div>
+      )}
       <LimitModal open={workspace.limitOpen} onClose={workspace.closeLimit} />
     </div>
   );

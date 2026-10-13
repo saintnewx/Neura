@@ -57,17 +57,17 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Меню навигации"
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-[#08090A]/95 p-6 backdrop-blur-2xl"
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg p-6 text-ink"
     >
       <div className="flex items-center justify-between">
         <span className="text-[18px] font-bold leading-none tracking-tight">
-          Neura<span className="text-accent">.</span>
+          Neura<span className="text-accent-ink">.</span>
         </span>
         <button
           type="button"
           onClick={onClose}
           aria-label="Закрыть меню"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted hover:text-accent"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 text-muted hover:text-accent-ink"
         >
           <X />
         </button>
@@ -86,7 +86,7 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
             key={href}
             href={href}
             onClick={onClose}
-            className="text-[32px] font-semibold tracking-tight text-text hover:text-accent"
+            className="flex min-h-11 items-center text-[32px] font-display tracking-tight text-ink hover:text-accent-ink"
           >
             {label}
           </a>
@@ -94,7 +94,7 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
         <Link
           to="/app"
           onClick={onClose}
-          className="stage-one-primary mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-base font-semibold"
+          className="bg-accent text-white mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-[19px] font-display"
         >
           Начать бесплатно
         </Link>

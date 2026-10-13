@@ -4,50 +4,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Scoped Midnight Navy Hero palette; existing application tokens stay intact.
-        neura: {
-          "bg-base": "#0B1220",
-          accent: "#6554B5",
-          "accent-text": "#8B7CD9",
-          "bg-elevated": "#161616",
-          foreground: "#F5F5F7",
-          muted: "#86868B",
-          border: "rgba(255, 255, 255, 0.08)",
-        },
-        "bg-base": "#0D0D0C",
-        "bg-elevated": "#161616",
-        card: "rgba(255, 255, 255, 0.04)",
-        "card-hover": "rgba(255, 255, 255, 0.06)",
-        border: "rgba(255, 255, 255, 0.08)",
-        "border-hover": "rgba(255, 255, 255, 0.14)",
-        "border-glow": "rgba(124, 131, 253, 0.40)",
-        "text-primary": "#F5F5F7",
-        "text-secondary": "#86868B",
-        "text-tertiary": "#5A5A5F",
-        accent: {
-          DEFAULT: "#FF5A5F",
-          ink: "#D63A40",
-        },
-        ink: "#222222",
-        glass: {
-          DEFAULT: "rgba(255, 255, 255, 0.6)",
-          strong: "rgba(255, 255, 255, 0.78)",
-        },
-        success: "#30D158",
-        error: "#FF453A",
-
-        // Legacy aliases (для старых компонентов)
         bg: "#FAF8F5",
-        text: "#F5F5F7",
+        ink: "#222222",
         muted: "#6A6A6A",
-        line: "rgba(255, 255, 255, 0.08)",
-        "accent-2": "#7C83FD",
-        "accent-hover": "#7C83FD",
+        accent: { DEFAULT: "#FF5A5F", ink: "#D63A40" },
+        glass: { DEFAULT: "rgba(255,255,255,0.6)", strong: "rgba(255,255,255,0.78)" },
+        // Compatibility names still used by shared controls, all in the warm palette.
+        "bg-base": "#FAF8F5",
+        "bg-elevated": "#FFFFFF",
+        card: "rgba(255,255,255,0.85)",
+        "card-hover": "#FFFFFF",
+        border: "rgba(34,34,34,0.08)",
+        "border-hover": "rgba(34,34,34,0.2)",
+        "text-primary": "#222222",
+        "text-secondary": "#6A6A6A",
+        "text-tertiary": "#6A6A6A",
+        text: "#222222",
+        line: "rgba(34,34,34,0.08)",
+        success: "#16803A",
+        error: "#C53030",
       },
       fontFamily: {
         sans: ["Inter Variable", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
         serif: ["Playfair Display", "Georgia", "serif"],
       },
+      maxWidth: { copy: "36rem" },
       fontWeight: {
         body: "510",
         display: "590",
@@ -77,10 +58,6 @@ export default {
         "preview-rise": "preview-rise 800ms ease-out 300ms both",
         "caret-blink": "caret-blink 1s steps(1, end) infinite",
         "fade-up": "fade-up 600ms ease-out both",
-        "sphere-rotate": "sphere-rotate 60s linear infinite",
-        "sphere-pulse": "sphere-pulse 4s ease-in-out infinite",
-        "scroll-indicator": "scroll-indicator 2.4s ease-in-out infinite",
-        marquee: "marquee 40s linear infinite",
       },
       keyframes: {
         "preview-rise": {
@@ -94,22 +71,6 @@ export default {
         "fade-up": {
           from: { transform: "translateY(24px)", opacity: "0" },
           to: { transform: "translateY(0)", opacity: "1" },
-        },
-        "sphere-rotate": {
-          from: { transform: "rotate(0deg)" },
-          to: { transform: "rotate(360deg)" },
-        },
-        "sphere-pulse": {
-          "0%, 100%": { transform: "scale(1)" },
-          "50%": { transform: "scale(1.05)" },
-        },
-        "scroll-indicator": {
-          "0%, 100%": { transform: "translateY(0)", opacity: "0.45" },
-          "50%": { transform: "translateY(5px)", opacity: "0.85" },
-        },
-        marquee: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(-50%)" },
         },
       },
     },

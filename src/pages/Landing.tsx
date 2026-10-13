@@ -59,8 +59,8 @@ export default function Landing() {
                 type="button"
                 onClick={() => void workspace.retrySave()}
                 disabled={workspace.saving}
-                className="inline-flex items-center justify-center border border-white/[0.14] text-text-primary rounded-full px-4 mt-3 transition-colors hover:border-white/[0.3] hover:bg-white/[0.03] disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ minHeight: "40px", fontSize: "14px" }}
+                className="inline-flex items-center justify-center border border-ink/[0.14] text-text-primary rounded-full px-4 mt-3 transition-transform hover:border-ink/30 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ minHeight: "44px", fontSize: "14px" }}
               >
                 {workspace.saving ? "Сохраняем…" : "Повторить сохранение"}
               </button>

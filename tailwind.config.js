@@ -4,6 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Scoped Midnight Navy Hero palette; existing application tokens stay intact.
+        neura: {
+          "bg-base": "#0B1220",
+          accent: "#6554B5",
+          "accent-text": "#8B7CD9",
+          "bg-elevated": "#161616",
+          foreground: "#F5F5F7",
+          muted: "#86868B",
+          border: "rgba(255, 255, 255, 0.08)",
+        },
         "bg-base": "#0D0D0C",
         "bg-elevated": "#161616",
         card: "rgba(255, 255, 255, 0.04)",

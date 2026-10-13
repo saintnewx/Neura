@@ -7,7 +7,8 @@ import type { GenerationInput, GenerationRecord } from "../lib/history";
 import { GenerationLimitError } from "../lib/usage";
 import type { DailyUsage } from "../lib/usage";
 
-type RequestInput = Omit<GenerationInput, "result">;
+// The cloud schema is unchanged; browser records may retain this optional field.
+type RequestInput = Omit<GenerationInput, "result"> & { context?: string };
 
 export interface WorkspaceTemplate {
   id: string;
@@ -73,6 +74,7 @@ export default function DemoSection({
   onTemplateReset,
 }: DemoSectionProps) {
   const [task, setTask] = useState("");
+  const [context, setContext] = useState("");
   const [type, setType] = useState<ContentType>("Пост");
   const [tone, setTone] = useState("Нейтральный");
   const [result, setResult] = useState("");
@@ -120,8 +122,17 @@ export default function DemoSection({
     setStreaming(false);
     busyCallback.current(false);
     const { task, type, tone, result } = selectedGeneration;
-    lastRequest.current = { task, type, tone };
+    // Guest JSON may have context. Ignore malformed extras without rewriting records.
+    const savedContext =
+      "context" in selectedGeneration &&
+      typeof selectedGeneration.context === "string" &&
+      selectedGeneration.context.length <= 2000
+        ? selectedGeneration.context.trim()
+        : "";
+    lastRequest.current = { task, type, tone, context: savedContext || undefined };
     setTask(stripTemplateSuffix(task));
+    // Legacy/cloud records have no context: never carry over another task's details.
+    setContext(savedContext);
     setType(type);
     setTone(tone);
     setResult(result);
@@ -135,6 +146,10 @@ export default function DemoSection({
   // A synchronous lock covers preflight, streaming, and persistence.
   async function handleGenerate(request: RequestInput) {
     if (disabled || busy.current || request.task.trim().length < 5) return;
+    if ((request.context?.length ?? 0) > 2000) {
+      setError("Дополнительный контекст не должен превышать 2000 символов.");
+      return;
+    }
     busy.current = true;
     const abort = new AbortController();
     controller.current = abort;
@@ -159,7 +174,11 @@ export default function DemoSection({
         );
         return;
       }
-      lastRequest.current = { ...request, task: request.task.trim() };
+      lastRequest.current = {
+        ...request,
+        task: request.task.trim(),
+        context: request.context?.trim() || undefined,
+      };
       const snapshot = lastRequest.current;
       setResult("");
       setComplete(false);
@@ -177,6 +196,7 @@ export default function DemoSection({
         {
           accessToken: admission.accessToken,
           tone: snapshot.tone,
+          context: snapshot.context,
           onUsage: (value) => {
             if (current()) onUsage(value);
           },
@@ -187,13 +207,18 @@ export default function DemoSection({
       setStreaming(false);
       setResult(text);
       setComplete(true);
+      // Existing guest JSON preserves extra fields; cloud INSERT cannot accept them.
       // Only a completed stream reaches the existing recovery/save mechanism.
-      await onGenerated({
+      const generation: GenerationInput & { context?: string } = {
         task: snapshot.task,
         type: snapshot.type,
         tone: snapshot.tone,
         result: text,
-      });
+        ...(!admission.accessToken && snapshot.context
+          ? { context: snapshot.context }
+          : {}),
+      };
+      await onGenerated(generation);
     } catch (failure) {
       if (!current()) return;
       if (failure instanceof GenerationLimitError) {
@@ -276,7 +301,7 @@ export default function DemoSection({
       );
       return;
     }
-    void handleGenerate({ task: submittedTask, type, tone });
+    void handleGenerate({ task: submittedTask, type, tone, context: context.trim() });
   }
   return (
     <section
@@ -355,6 +380,31 @@ export default function DemoSection({
               style={{ fontSize: "12px" }}
             >
               {task.length} / {compact ? 2000 : 500}
+            </div>
+
+            <div className="mb-6">
+              <div className="mb-2 flex items-center justify-between gap-3 text-[13px] text-muted">
+                <label htmlFor={`${variant}-context`}>Что важно учесть?</label>
+                <span className="text-xs">Необязательно</span>
+              </div>
+              <p id={`${variant}-context-help`} className="mb-3 text-xs leading-relaxed text-muted">
+                Расскажите о продукте, аудитории, преимуществах или других деталях. Это поможет AI написать точнее.
+              </p>
+              <textarea
+                id={`${variant}-context`}
+                value={context}
+                disabled={disabled || loading}
+                onChange={(event) => setContext(event.target.value)}
+                maxLength={2000}
+                rows={3}
+                aria-describedby={`${variant}-context-help ${variant}-context-history`}
+                placeholder="Например: кофейня в Алматы, аудитория — студенты, есть тихий зал для работы, тон — дружелюбный."
+                className="w-full resize-y rounded-2xl border border-ink/[0.08] bg-white/80 p-4 text-base text-ink placeholder:text-muted focus:border-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-ink focus-visible:outline-offset-2 disabled:opacity-40"
+              />
+              <p className="mt-2 text-right text-xs text-muted">{context.length} / 2000</p>
+              <p id={`${variant}-context-history`} className="mt-2 text-xs leading-relaxed text-muted">
+                В гостевом режиме контекст сохраняется в этом браузере. В облачную историю он пока не записывается.
+              </p>
             </div>
 
             <label

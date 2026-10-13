@@ -281,26 +281,26 @@ export default function DemoSection({
   return (
     <section
       id="demo"
-      className={compact ? "relative" : "relative py-24 md:py-40"}
+      className={compact ? "relative" : "relative bg-bg py-24 md:py-40"}
     >
       <div className={compact ? "w-full" : "max-w-6xl mx-auto px-6"}>
         {!compact && (
           <div className="max-w-3xl mb-16 md:mb-24">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-text-tertiary mb-4">
+            <p className="text-xs font-display tracking-[0.2em] uppercase text-muted mb-4">
               Демонстрация
             </p>
             <h2
-              className="text-text-primary font-bold"
+              className="text-ink font-display"
               style={{
-                fontSize: "clamp(36px, 5.5vw, 80px)",
+                fontSize: "32px",
                 lineHeight: 1,
-                letterSpacing: "-0.03em",
+                letterSpacing: "-0.01em",
               }}
             >
               Создай контент, который цепляет
             </h2>
             <p
-              className="text-text-secondary mt-6 max-w-2xl"
+              className="text-muted mt-6 max-w-2xl"
               style={{ fontSize: "19px", lineHeight: 1.6 }}
             >
               Опиши задачу — Neura выдаст готовый текст за секунды. Без
@@ -310,11 +310,11 @@ export default function DemoSection({
         )}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Левая панель */}
-          <div className="lg:col-span-2 rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 sm:p-8 flex flex-col">
+          <div className="lg:col-span-2 rounded-card bg-white/80 border border-ink/[0.08] p-5 sm:p-8 flex flex-col">
             <div className="flex items-center gap-2 mb-6">
-              <Sparkles size={18} className="text-accent" />
+              <Sparkles size={18} className="text-accent-ink" />
               <span
-                className="text-text-primary font-semibold"
+                className="text-ink font-display"
                 style={{ fontSize: "16px" }}
               >
                 Создать контент
@@ -322,14 +322,14 @@ export default function DemoSection({
             </div>
 
             {template && (
-              <p className="mb-4 rounded-xl border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-accent">
+              <p className="mb-4 rounded-xl border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-accent-ink">
                 Шаблон: {template.name}
               </p>
             )}
 
             <label
               htmlFor={`${variant}-task`}
-              className="text-text-secondary mb-3 block"
+              className="text-muted mb-3 block"
               style={{ fontSize: "13px" }}
             >
               Опишите задачу
@@ -343,7 +343,7 @@ export default function DemoSection({
                 template?.placeholder ??
                 "Например: напиши дружелюбный пост о новом осеннем меню кофейни..."
               }
-              className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4 text-text-primary placeholder:text-text-tertiary outline-none focus:border-white/[0.2] transition-colors resize-none mb-2"
+              className="bg-white/80 border border-ink/[0.08] rounded-2xl p-4 text-ink placeholder:text-muted outline-none focus:border-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-ink focus-visible:outline-offset-2 transition-transform resize-none mb-2"
               style={{
                 fontSize: "16px",
                 minHeight: compact ? "140px" : "160px",
@@ -351,7 +351,7 @@ export default function DemoSection({
               maxLength={compact ? 2000 : 500}
             />
             <div
-              className="text-text-tertiary mb-6 text-right"
+              className="text-muted mb-6 text-right"
               style={{ fontSize: "12px" }}
             >
               {task.length} / {compact ? 2000 : 500}
@@ -359,7 +359,7 @@ export default function DemoSection({
 
             <label
               htmlFor={`${variant}-type`}
-              className="text-text-secondary mb-2 block"
+              className="text-muted mb-2 block"
               style={{ fontSize: "13px" }}
             >
               Формат
@@ -369,7 +369,7 @@ export default function DemoSection({
               disabled={disabled || (compact && loading)}
               value={type}
               onChange={(e) => setType(e.target.value as ContentType)}
-              className="bg-white/[0.03] border border-white/[0.08] rounded-2xl px-4 text-text-primary outline-none focus:border-white/[0.2] transition-colors mb-6 appearance-none"
+              className="bg-white/80 border border-ink/[0.08] rounded-2xl px-4 text-ink outline-none focus:border-accent-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-ink focus-visible:outline-offset-2 transition-transform mb-6 appearance-none"
               style={{ fontSize: "16px", height: "48px" }}
             >
               {contentTypes.map((format) => (
@@ -379,7 +379,7 @@ export default function DemoSection({
 
             {compact ? (
               <fieldset className="mb-6 min-w-0" disabled={disabled || loading}>
-                <legend className="mb-2 text-[13px] text-text-secondary">
+                <legend className="mb-2 text-[13px] text-muted">
                   Тон
                 </legend>
                 <div className="flex flex-wrap gap-2">
@@ -394,15 +394,15 @@ export default function DemoSection({
                       }}
                       className={`min-h-11 rounded-full border px-3 py-2 text-sm font-medium transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${
                         tone === value
-                          ? "border-accent bg-accent/20 text-accent"
-                          : "border-white/[0.08] text-text-secondary hover:border-accent/30"
+                          ? "border-accent bg-accent/20 text-accent-ink"
+                          : "border-ink/[0.08] text-muted hover:border-accent/30"
                       }`}
                     >
                       {value}
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-text-secondary">
+                <p className="mt-2 text-xs text-muted">
                   Текущий тон: {tone}
                 </p>
               </fieldset>
@@ -410,7 +410,7 @@ export default function DemoSection({
               <>
                 <label
                   htmlFor={`${variant}-tone`}
-                  className="text-text-secondary mb-2 text-[13px]"
+                  className="text-muted mb-2 text-[13px]"
                 >
                   Тон
                 </label>
@@ -419,7 +419,7 @@ export default function DemoSection({
                   value={tone}
                   disabled={disabled}
                   onChange={(event) => setTone(event.target.value)}
-                  className="min-h-12 mb-6 rounded-2xl border border-border bg-bg-elevated px-4 text-base text-text-primary"
+                  className="min-h-12 mb-6 rounded-2xl border border-ink/10 bg-white px-4 text-base text-ink"
                 >
                   {Array.from(
                     new Set([
@@ -440,7 +440,7 @@ export default function DemoSection({
             )}
 
             <div
-              className="flex items-center justify-between mb-4 text-text-tertiary"
+              className="flex items-center justify-between mb-4 text-muted"
               style={{ fontSize: "12px" }}
             >
               <span className="inline-flex items-center gap-1.5">
@@ -451,7 +451,7 @@ export default function DemoSection({
                 <button
                   type="button"
                   onClick={onLimitReached}
-                  className="min-h-11 text-accent hover:underline"
+                  className="min-h-11 text-accent-ink hover:underline"
                 >
                   Лимиты →
                 </button>
@@ -462,8 +462,8 @@ export default function DemoSection({
               type="button"
               onClick={submitTask}
               disabled={disabled || task.trim().length < 5 || loading}
-              className="mt-auto inline-flex items-center justify-center gap-2 bg-text-primary text-bg-base rounded-full px-6 font-medium transition-[transform,opacity] duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
-              style={{ minHeight: "52px", fontSize: "17px" }}
+              className="mt-auto inline-flex items-center justify-center gap-2 bg-accent text-white rounded-full px-6 font-display transition-[transform,opacity] duration-200 motion-reduce:transition-none motion-safe:hover:scale-[1.01] motion-safe:active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              style={{ minHeight: "56px", fontSize: "19px" }}
             >
               <Sparkles size={18} />
               {loading
@@ -486,19 +486,19 @@ export default function DemoSection({
           </div>
 
           {/* Partial streams stay visible but cannot be saved or exported as complete. */}
-          <div className="lg:col-span-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 sm:p-8 flex flex-col min-h-[400px]">
+          <div className="lg:col-span-3 rounded-card bg-white/80 border border-ink/[0.08] p-5 sm:p-8 flex flex-col min-h-[400px]">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <Sparkles size={18} className="text-accent" />
+                <Sparkles size={18} className="text-accent-ink" />
                 <span
-                  className="text-text-primary font-semibold"
+                  className="text-ink font-display"
                   style={{ fontSize: "16px" }}
                 >
                   Результат
                 </span>
               </div>
               <span
-                className="text-text-tertiary border border-white/[0.08] rounded-full px-3 py-1"
+                className="text-muted border border-ink/[0.08] rounded-full px-3 py-1"
                 style={{ fontSize: "11px", letterSpacing: "0.1em" }}
               >
                 AI CONTENT
@@ -508,7 +508,7 @@ export default function DemoSection({
             {!result && !loading && !error && (
               <div className="flex-1 flex items-center justify-center text-center">
                 <p
-                  className="text-text-tertiary max-w-xs"
+                  className="text-muted max-w-xs"
                   style={{ fontSize: "15px", lineHeight: 1.6 }}
                 >
                   Здесь появится готовый текст. Опишите задачу слева и нажмите
@@ -519,11 +519,11 @@ export default function DemoSection({
 
             {loading && !result && (
               <div className="flex-1 flex flex-col gap-3 pt-2">
-                <div className="h-5 bg-white/[0.04] rounded w-3/4 motion-safe:animate-pulse" />
-                <div className="h-5 bg-white/[0.04] rounded w-full motion-safe:animate-pulse" />
-                <div className="h-5 bg-white/[0.04] rounded w-2/3 motion-safe:animate-pulse" />
-                <div className="h-5 bg-white/[0.04] rounded w-5/6 motion-safe:animate-pulse" />
-                <div className="h-5 bg-white/[0.04] rounded w-1/2 motion-safe:animate-pulse" />
+                <div className="h-5 bg-ink/10 rounded w-3/4 motion-safe:animate-pulse" />
+                <div className="h-5 bg-ink/10 rounded w-full motion-safe:animate-pulse" />
+                <div className="h-5 bg-ink/10 rounded w-2/3 motion-safe:animate-pulse" />
+                <div className="h-5 bg-ink/10 rounded w-5/6 motion-safe:animate-pulse" />
+                <div className="h-5 bg-ink/10 rounded w-1/2 motion-safe:animate-pulse" />
               </div>
             )}
 
@@ -531,7 +531,7 @@ export default function DemoSection({
               <button
                 type="button"
                 disabled={disabled}
-                className="min-h-11 mb-4 text-sm text-accent disabled:opacity-40"
+                className="min-h-11 mb-4 text-sm text-accent-ink disabled:opacity-40"
                 onClick={() => {
                   if (lastRequest.current)
                     void handleGenerate(lastRequest.current);
@@ -550,7 +550,7 @@ export default function DemoSection({
             {result && (
               <>
                 <div
-                  className="flex-1 text-text-primary whitespace-pre-line break-words"
+                  className="flex-1 text-ink whitespace-pre-line break-words"
                   style={{ fontSize: "16px", lineHeight: 1.7 }}
                 >
                   {result}
@@ -563,7 +563,7 @@ export default function DemoSection({
                     <button
                       type="button"
                       onClick={() => void handleCopy()}
-                      className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
+                      className="inline-flex items-center gap-2 border border-ink/[0.08] text-ink rounded-full px-5 transition-transform hover:border-ink/20 hover:bg-white/80"
                       style={{ minHeight: "44px", fontSize: "14px" }}
                     >
                       {copied ? <Check size={16} /> : <Copy size={16} />}
@@ -572,7 +572,7 @@ export default function DemoSection({
                     <button
                       type="button"
                       onClick={handleDownload}
-                      className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03]"
+                      className="inline-flex items-center gap-2 border border-ink/[0.08] text-ink rounded-full px-5 transition-transform hover:border-ink/20 hover:bg-white/80"
                       style={{ minHeight: "44px", fontSize: "14px" }}
                     >
                       <Download size={16} />
@@ -585,7 +585,7 @@ export default function DemoSection({
                           void handleGenerate(lastRequest.current);
                       }}
                       disabled={disabled || loading}
-                      className="inline-flex items-center gap-2 border border-white/[0.08] text-text-primary rounded-full px-5 transition-colors hover:border-white/[0.2] hover:bg-white/[0.03] disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="inline-flex items-center gap-2 border border-ink/[0.08] text-ink rounded-full px-5 transition-transform hover:border-ink/20 hover:bg-white/80 disabled:opacity-40 disabled:cursor-not-allowed"
                       style={{ minHeight: "44px", fontSize: "14px" }}
                     >
                       <RefreshCw size={16} />

@@ -56,7 +56,7 @@ export default function LimitModal({ open, onClose }: LimitModalProps) {
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-bg/85 p-5 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/20 p-5"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -67,18 +67,18 @@ export default function LimitModal({ open, onClose }: LimitModalProps) {
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="glass-strong relative w-full max-w-lg rounded-2xl border border-line p-7 sm:p-9"
+        className="relative w-full max-w-lg rounded-card-lg bg-white/[0.94] text-ink shadow-glass p-7 sm:p-9 supports-[backdrop-filter:blur(1px)]:bg-glass-strong supports-[backdrop-filter:blur(1px)]:backdrop-blur-[16px]"
       >
         <button
           ref={close}
           type="button"
           aria-label="Закрыть сообщение о лимите"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-2 text-muted transition-[transform,opacity] duration-150 ease-out hover:scale-[1.02] hover:text-text"
+          className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-lg p-2 text-muted transition-[transform,opacity] duration-150 ease-out motion-safe:hover:scale-[1.02] hover:text-ink"
         >
           <X size={20} />
         </button>
-        <span className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-accent/20 bg-accent/10 text-accent">
+        <span className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-accent/20 bg-accent/10 text-accent-ink">
           <Clock3 size={24} />
         </span>
         <h2
@@ -95,10 +95,10 @@ export default function LimitModal({ open, onClose }: LimitModalProps) {
           подключены — посмотреть тарифы можно уже сейчас.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-          <Link to="/#pricing" onClick={onClose} className="btn-primary">
+          <Link to="/#pricing" onClick={onClose} className="btn-primary bg-accent text-white text-[19px] font-display">
             Посмотреть тарифы
           </Link>
-          <button type="button" onClick={onClose} className="btn-secondary">
+          <button type="button" onClick={onClose} className="btn-secondary border-ink/10 text-ink">
             Понятно
           </button>
         </div>

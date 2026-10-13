@@ -74,6 +74,7 @@ export default {
         250: "250ms",
       },
       animation: {
+        "preview-rise": "preview-rise 800ms ease-out 300ms both",
         "caret-blink": "caret-blink 1s steps(1, end) infinite",
         "fade-up": "fade-up 600ms ease-out both",
         "sphere-rotate": "sphere-rotate 60s linear infinite",
@@ -82,6 +83,10 @@ export default {
         marquee: "marquee 40s linear infinite",
       },
       keyframes: {
+        "preview-rise": {
+          from: { transform: "translateY(40px)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
         "caret-blink": {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },

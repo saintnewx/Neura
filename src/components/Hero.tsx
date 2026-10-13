@@ -1,53 +1,25 @@
-import { ArrowRight, ArrowDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import HeroPreview from "./HeroPreview";
 
-// Product-first Hero. Navigation reuses the existing guest and account flows.
+// The Hero uses the existing /app destination; its preview never calls the API.
 export default function Hero() {
   return (
-    <section
-      id="hero"
-      aria-labelledby="hero-title"
-      className="relative bg-neura-bg-base text-neura-foreground"
-    >
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-32 md:pb-24 md:pt-40 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12 lg:pb-28 lg:pt-44">
-        <div className="min-w-0">
-          <p className="mb-6 text-xs font-semibold uppercase tracking-[0.16em] text-neura-accent-text">
-            AI для маркетинговых текстов
-          </p>
-          <h1
-            id="hero-title"
-            className="max-w-xl text-balance text-[clamp(40px,5.2vw,72px)] font-bold leading-[1.06] tracking-[-0.04em]"
-          >
-            От идеи до готового текста.
-          </h1>
-          <p className="mt-7 max-w-lg text-base font-normal leading-[1.7] text-neura-muted sm:text-lg">
-            Создавайте посты, рекламные тексты и описания товаров с помощью AI.
-            Выбирайте тон, получайте варианты и доводите результат до нужного
-            звучания.
-          </p>
-
-          {/* The demo anchor already has a fixed-header offset and reduced-motion fallback. */}
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link
-              to="/app"
-              className="inline-flex min-h-[52px] items-center justify-center gap-3 rounded-xl bg-neura-accent px-6 text-base font-medium text-white transition-transform duration-200 ease-out motion-safe:hover:-translate-y-0.5 focus-visible:outline-neura-accent-text motion-reduce:transform-none motion-reduce:transition-none"
-            >
-              Начать создавать
-              <ArrowRight size={18} aria-hidden="true" />
-            </Link>
-            <a
-              href="#demo"
-              className="inline-flex min-h-[52px] items-center justify-center gap-3 rounded-xl border border-neura-border px-6 text-base font-medium text-neura-foreground transition-transform duration-200 ease-out motion-safe:hover:-translate-y-0.5 hover:border-neura-muted focus-visible:outline-neura-accent-text motion-reduce:transform-none motion-reduce:transition-none"
-            >
-              Смотреть пример
-              <ArrowDown size={18} aria-hidden="true" />
-            </a>
-          </div>
+    <section id="hero" aria-labelledby="hero-title" className="relative overflow-hidden bg-bg text-center text-ink pt-[calc(112px+env(safe-area-inset-top))] md:pt-[calc(168px+env(safe-area-inset-top))]">
+      <div className="mx-auto max-w-6xl px-5 md:px-6">
+        <h1 id="hero-title" className="mx-auto max-w-[300px] text-balance text-[44px] font-display leading-[1.05] tracking-[-0.025em] motion-safe:animate-fade-up md:max-w-none md:text-[64px] md:leading-[1.02] md:tracking-display lg:text-[clamp(56px,7vw,88px)]">
+          От <em className="font-serif text-[1.04em] font-normal tracking-[-0.01em]">идеи</em><br className="hidden md:block" />{" "}до готового текста
+        </h1>
+        <p className="mx-auto mt-6 max-w-[335px] text-[17px] font-body leading-[1.5] text-muted motion-safe:animate-fade-up motion-safe:[animation-delay:80ms] md:max-w-[520px] md:text-xl">
+          Опишите идею одной строкой. Neura напишет пост, письмо или сценарий в нужном тоне.
+        </p>
+        <div className="mt-7 motion-safe:animate-fade-up motion-safe:[animation-delay:160ms] md:mt-9">
+          <Link to="/app" className="inline-flex h-14 w-full max-w-[335px] items-center justify-center rounded-pill bg-accent px-7 text-[19px] font-display text-white transition-transform duration-[120ms] ease-out hover:bg-[#F04E53] motion-safe:hover:-translate-y-px motion-safe:active:scale-[0.97] focus-visible:outline-accent-ink motion-reduce:transition-none md:w-auto">
+            Попробовать бесплатно
+          </Link>
+          <p className="mt-3.5 text-sm font-body text-muted">5 генераций бесплатно · без карты</p>
         </div>
-
-        <HeroPreview />
       </div>
+      <HeroPreview />
     </section>
   );
 }

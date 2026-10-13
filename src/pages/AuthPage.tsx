@@ -150,7 +150,7 @@ export default function AuthPage() {
           aria-labelledby="auth-title"
         >
           <Link to="/" className="auth-logo">
-            Neura<span className="text-accent">.</span>
+            Neura<span className="text-accent-ink">.</span>
           </Link>
           <h1 id="auth-title" className="auth-heading">
             {registering ? "Создайте аккаунт" : "Войдите в Neura"}

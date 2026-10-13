@@ -6,12 +6,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
-    @apply m-0 bg-bg font-sans text-lg leading-[1.65] text-text antialiased;
-    background-color: #08090A;
-    font-weight: 510;
+    @apply m-0 bg-bg font-sans text-body font-body text-ink antialiased;
+    font-feature-settings: "cv11", "ss01";
+    font-optical-sizing: auto;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1,
   h2,

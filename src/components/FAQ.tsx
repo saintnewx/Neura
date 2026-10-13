@@ -34,19 +34,19 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="relative py-24 md:py-40">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="faq" className="relative bg-bg py-24 md:py-40">
+      <div className="max-w-3xl mx-auto px-6">
         <Reveal>
           <div className="max-w-3xl mb-16 md:mb-24">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-text-tertiary mb-4">
+            <p className="text-xs font-display tracking-[0.2em] uppercase text-muted mb-4">
               Вопросы
             </p>
             <h2
-              className="text-text-primary font-bold"
+              className="text-ink font-display"
               style={{
-                fontSize: "clamp(36px, 5.5vw, 80px)",
+                fontSize: "32px",
                 lineHeight: 1,
-                letterSpacing: "-0.03em",
+                letterSpacing: "-0.01em",
               }}
             >
               Частые вопросы
@@ -59,21 +59,21 @@ export default function FAQ() {
             const isOpen = open === i;
             return (
               <Reveal key={item.q} delay={i * 60}>
-                <div className="border-b border-white/[0.08]">
+                <div className="border-b border-ink/[0.08]">
                   <h3>
                     <button
                       id={`faq-question-${i}`}
                       type="button"
                       onClick={() => setOpen(isOpen ? null : i)}
-                      className="min-h-11 w-full flex items-center justify-between gap-6 py-6 text-left transition-colors duration-200 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 group"
+                      className="min-h-11 w-full flex items-center justify-between gap-6 py-6 text-left transition-transform duration-200 motion-reduce:transition-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 group"
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${i}`}
                     >
                       <span
-                        className={`font-semibold transition-colors duration-200 motion-reduce:transition-none ${
+                        className={`font-display transition-transform duration-200 motion-reduce:transition-none motion-reduce:transition-none ${
                           isOpen
-                            ? "text-accent"
-                            : "text-text-primary group-hover:text-accent"
+                            ? "text-accent-ink"
+                            : "text-ink group-hover:text-accent-ink"
                         }`}
                         style={{ fontSize: "18px", lineHeight: 1.4 }}
                       >
@@ -82,7 +82,7 @@ export default function FAQ() {
                       <Plus
                         size={20}
                         aria-hidden="true"
-                        className={`flex-shrink-0 text-accent transition-transform duration-200 motion-reduce:transition-none ${
+                        className={`flex-shrink-0 text-accent-ink transition-transform duration-200 motion-reduce:transition-none motion-reduce:transition-none ${
                           isOpen ? "rotate-45" : "rotate-0"
                         }`}
                       />
@@ -93,14 +93,15 @@ export default function FAQ() {
                     id={`faq-answer-${i}`}
                     role="region"
                     aria-labelledby={`faq-question-${i}`}
+                    className="grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,visibility] duration-[400ms] ease-out [&[hidden]]:!grid [&[hidden]]:grid-rows-[0fr] [&[hidden]]:opacity-0 [&[hidden]]:invisible motion-reduce:transition-none"
                     hidden={!isOpen}
                   >
-                    <p
-                      className="text-text-secondary pb-6 pr-0 sm:pr-8"
+                    <div className="min-h-0 overflow-hidden"><p
+                      className="text-muted pb-6 pr-0 sm:pr-8"
                       style={{ fontSize: "16px", lineHeight: 1.7 }}
                     >
                       {item.a}
-                    </p>
+                    </p></div>
                   </div>
                 </div>
               </Reveal>

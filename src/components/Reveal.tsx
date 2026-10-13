@@ -38,7 +38,7 @@ export default function Reveal({ children, delay = 0, className = "" }: RevealPr
   return (
     <div
       ref={ref}
-      className={className}
+      className={`warm-reveal ${className}`}
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(30px)",

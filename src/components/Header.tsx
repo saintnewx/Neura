@@ -22,26 +22,26 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-opacity duration-200 motion-reduce:transition-none ${
           scrolled
-            ? "bg-[#0D0D0C]/80 backdrop-blur-xl border-b border-white/[0.06]"
+            ? "bg-glass-strong backdrop-blur-[16px] md:backdrop-blur-[24px] border-b border-ink/[0.06] shadow-glass"
             : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-5 md:px-6 h-16 md:h-[72px] flex items-center justify-between">
           <a
             href="/"
-            className="text-text-primary font-bold text-lg tracking-tight"
+            className="inline-flex min-h-11 items-center text-ink font-display text-xl tracking-tight"
           >
-            Neura<span className="text-accent">.</span>
+            Neura<span className="text-accent-ink">.</span>
           </a>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-text-secondary hover:text-text-primary transition-colors duration-200"
+                className="inline-flex min-h-11 items-center text-muted hover:text-ink"
                 style={{ fontSize: "14px" }}
               >
                 {link.label}
@@ -49,11 +49,11 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <a
               href="/app"
-              className="inline-flex items-center justify-center bg-[#F5F5F7] text-[#0D0D0C] rounded-full px-5 font-medium transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              style={{ minHeight: "40px", fontSize: "14px" }}
+              className="inline-flex items-center justify-center bg-accent text-white rounded-full px-5 font-display transition-transform duration-200 motion-safe:hover:-translate-y-px motion-safe:active:scale-[0.97] motion-reduce:transition-none"
+              style={{ minHeight: "44px", fontSize: "19px" }}
             >
               Попробовать бесплатно
             </a>
@@ -61,7 +61,7 @@ export default function Header() {
 
           <button
             onClick={() => setMenuOpen(true)}
-            className="md:hidden text-text-primary p-2 -mr-2"
+            className="lg:hidden flex h-11 w-11 items-center justify-center text-ink -mr-2"
             aria-label="Открыть меню"
           >
             <Menu size={22} />
@@ -71,14 +71,14 @@ export default function Header() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#0D0D0C]/95 backdrop-blur-2xl md:hidden">
-          <div className="flex items-center justify-between px-6 h-16">
-            <span className="text-text-primary font-bold text-lg">
-              Neura<span className="text-accent">.</span>
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-bg lg:hidden">
+          <div className="flex items-center justify-between px-5 md:px-6 h-16 md:h-[72px]">
+            <span className="text-ink font-bold text-lg">
+              Neura<span className="text-accent-ink">.</span>
             </span>
             <button
               onClick={() => setMenuOpen(false)}
-              className="text-text-primary p-2 -mr-2"
+              className="flex h-11 w-11 items-center justify-center text-ink -mr-2"
               aria-label="Закрыть меню"
             >
               <X size={22} />
@@ -91,7 +91,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="text-text-primary text-2xl font-medium"
+                className="flex min-h-11 items-center text-ink text-2xl font-display"
               >
                 {link.label}
               </a>
@@ -100,8 +100,8 @@ export default function Header() {
             <a
               href="/app"
               onClick={() => setMenuOpen(false)}
-              className="mt-6 inline-flex items-center justify-center bg-[#F5F5F7] text-[#0D0D0C] rounded-full px-6 font-medium"
-              style={{ minHeight: "52px", fontSize: "17px" }}
+              className="mt-6 inline-flex items-center justify-center bg-accent text-white rounded-pill px-6 font-display"
+              style={{ minHeight: "56px", fontSize: "19px" }}
             >
               Попробовать бесплатно
             </a>

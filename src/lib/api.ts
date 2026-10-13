@@ -9,6 +9,7 @@ export type ContentType = (typeof contentTypes)[number];
 export interface GenerateOptions {
   accessToken?: string;
   tone?: string;
+  context?: string;
   onUsage?: (usage: DailyUsage) => void;
 }
 
@@ -31,7 +32,12 @@ export async function generateContent(
           ? { Authorization: `Bearer ${options.accessToken}` }
           : {}),
       },
-      body: JSON.stringify({ task, type, tone: options.tone || "Нейтральный" }),
+      body: JSON.stringify({
+        task,
+        type,
+        tone: options.tone || "Нейтральный",
+        context: options.context?.trim() || undefined,
+      }),
       signal: signal
         ? AbortSignal.any([signal, AbortSignal.timeout(65_000)])
         : AbortSignal.timeout(65_000),

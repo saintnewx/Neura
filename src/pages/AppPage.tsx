@@ -321,7 +321,7 @@ export default function AppPage() {
         <div className="mb-4 flex items-start justify-between gap-2">
           <h2
             id={headingId}
-            className="min-w-0 text-lg font-semibold leading-snug text-text-primary"
+            className="min-w-0 text-lg font-display leading-snug text-ink"
           >
             Последние генерации
           </h2>
@@ -330,7 +330,7 @@ export default function AppPage() {
               type="button"
               onClick={workspace.reloadHistory}
               disabled={workspace.historyLoading || loading || generatorBusy}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] text-text-secondary hover:text-accent disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-ink/[0.08] text-muted hover:text-accent-ink disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
               aria-label="Обновить историю"
             >
               <RefreshCw size={18} aria-hidden="true" />
@@ -340,7 +340,7 @@ export default function AppPage() {
                 ref={historyClose}
                 type="button"
                 onClick={() => setHistoryOpen(false)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.08] text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-ink/[0.08] text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
                 aria-label="Закрыть историю"
               >
                 <X size={20} aria-hidden="true" />
@@ -348,13 +348,13 @@ export default function AppPage() {
             )}
           </div>
         </div>
-        <p className="mb-5 text-xs text-text-secondary">
+        <p className="mb-5 text-xs text-muted">
           {user ? "Облачная история" : "История в этом браузере"}
         </p>
         {workspace.historyError && (
           <div
             role="alert"
-            className="mb-4 rounded-2xl border border-error/30 bg-white/[0.03] p-4 text-sm"
+            className="mb-4 rounded-card border border-error/30 bg-white/80 p-4 text-sm"
           >
             <p className="break-words text-error">{workspace.historyError}</p>
             {!!workspace.pendingCount && (
@@ -362,7 +362,7 @@ export default function AppPage() {
                 type="button"
                 onClick={() => void workspace.retrySave()}
                 disabled={workspace.saving}
-                className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/[0.08] px-3 py-2 text-text-primary disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-ink/[0.08] px-3 py-2 text-ink disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
               >
                 <RefreshCw size={15} aria-hidden="true" />
                 {workspace.saving ? "Сохраняем…" : "Повторить сохранение"}
@@ -371,12 +371,12 @@ export default function AppPage() {
           </div>
         )}
         {workspace.historyLoading && (
-          <p role="status" className="mb-4 py-2 text-sm text-text-secondary">
+          <p role="status" className="mb-4 py-2 text-sm text-muted">
             Загружаем историю…
           </p>
         )}
         {!workspace.historyLoading && !workspace.records.length && (
-          <p className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 text-sm leading-relaxed text-text-secondary">
+          <p className="rounded-card border border-ink/[0.08] bg-white/80 p-5 text-sm leading-relaxed text-muted">
             Здесь появятся ваши готовые тексты. Выберите запись, чтобы вернуться
             к ней.
           </p>
@@ -389,12 +389,12 @@ export default function AppPage() {
                 onClick={() => selectHistory(record)}
                 disabled={historyDisabled}
                 aria-pressed={restored?.id === record.id}
-                className={`min-h-11 w-full min-w-0 rounded-2xl border p-4 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${restored?.id === record.id ? "border-accent/40 bg-accent/5" : "border-white/[0.08] bg-white/[0.03] hover:border-accent/30"}`}
+                className={`min-h-11 w-full min-w-0 rounded-card border p-4 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${restored?.id === record.id ? "border-accent/40 bg-accent/5" : "border-ink/[0.08] bg-white/80 hover:border-accent/30"}`}
               >
-                <span className="mb-2 line-clamp-2 block break-words text-sm font-medium text-text-primary">
+                <span className="mb-2 line-clamp-2 block break-words text-sm font-medium text-ink">
                   {stripTemplateSuffix(record.task)}
                 </span>
-                <span className="flex flex-wrap items-center justify-between gap-2 text-xs text-text-secondary">
+                <span className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
                   <span>{record.type}</span>
                   <time dateTime={record.created_at}>
                     {new Date(record.created_at).toLocaleString("ru-RU", {
@@ -413,7 +413,7 @@ export default function AppPage() {
             onClick={() => setShowAllHistory((value) => !value)}
             aria-expanded={showAllHistory}
             aria-controls={listId}
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-white/[0.08] px-4 py-2 text-sm text-text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-ink/[0.08] px-4 py-2 text-sm text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
           >
             {showAllHistory
               ? "Последние 5"
@@ -425,22 +425,22 @@ export default function AppPage() {
   }
 
   return (
-    <div className="hero-glow min-h-screen font-[510]">
+    <div className="bg-bg text-ink min-h-screen font-[510]">
       <div aria-hidden={mobileHistoryOpen || undefined}>
         {/* Compact navigation and account controls. */}
-        <header className="border-b border-border">
+        <header className="border-b border-ink/[0.08] bg-white/80">
           <div className="container-page flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
             <div className="flex items-center gap-6">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
+                className="inline-flex min-h-11 min-w-11 items-center gap-2 text-sm text-muted hover:text-accent-ink"
               >
                 <ArrowLeft size={18} />
                 <span className="hidden sm:inline">Назад</span>
                 <span className="sr-only sm:hidden">На главную</span>
               </Link>
-              <Link to="/" className="text-xl font-extrabold tracking-tight">
-                Neura<span className="text-accent">.</span>
+              <Link to="/" className="inline-flex min-h-11 items-center text-xl font-display tracking-tight">
+                Neura<span className="text-accent-ink">.</span>
               </Link>
             </div>
             <button
@@ -450,7 +450,7 @@ export default function AppPage() {
               aria-haspopup="dialog"
               aria-expanded={mobileHistoryOpen}
               aria-controls="mobile-history-panel"
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/[0.08] px-3 py-2 text-sm text-text-primary xl:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-ink/[0.08] px-3 py-2 text-sm text-ink xl:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
             >
               <History size={18} aria-hidden="true" />
               История
@@ -463,7 +463,7 @@ export default function AppPage() {
               <div className="flex min-w-0 max-w-full items-center gap-3">
                 <span
                   title={email}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-xs text-accent"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 text-xs text-accent-ink"
                   aria-label={`Аккаунт: ${email}`}
                 >
                   {initial}
@@ -475,7 +475,7 @@ export default function AppPage() {
                   type="button"
                   onClick={() => void handleSignOut()}
                   disabled={signingOut}
-                  className="btn-secondary min-h-10 shrink-0 px-3 py-2 text-sm"
+                  className="btn-secondary min-h-11 shrink-0 px-3 py-2 text-sm"
                 >
                   <LogOut size={16} />
                   {signingOut ? "Выходим…" : "Выйти"}
@@ -484,7 +484,7 @@ export default function AppPage() {
             ) : (
               <Link
                 to="/auth"
-                className="btn-secondary min-h-10 px-4 py-2 text-sm"
+                className="btn-secondary min-h-11 px-4 py-2 text-sm"
               >
                 <LogIn size={16} />
                 Войти
@@ -503,10 +503,10 @@ export default function AppPage() {
           )}
           <div className="mb-9">
             <p className="eyebrow mb-4 flex items-center gap-2">
-              <Sparkles size={14} className="text-accent" />
+              <Sparkles size={14} className="text-accent-ink" />
               Ваша рабочая область
             </p>
-            <h1 className="text-[clamp(32px,5vw,72px)] font-bold leading-tight tracking-tight break-words">
+            <h1 className="text-[clamp(32px,5vw,72px)] font-display leading-tight tracking-tight break-words">
               {greetingName ? `Привет, ${greetingName}` : "Привет"}
             </h1>
             <p className="mt-4 text-lg font-[510] text-muted">
@@ -523,14 +523,14 @@ export default function AppPage() {
             )}
           </div>
           {!loading && !user && (
-            <div className="glass-strong mb-6 flex flex-col gap-4 rounded-xl border border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="bg-white/80 mb-6 flex flex-col gap-4 rounded-xl border border-ink/[0.08] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="flex items-center gap-3 text-sm text-muted">
-                <Cloud size={20} className="shrink-0 text-accent" />
+                <Cloud size={20} className="shrink-0 text-accent-ink" />
                 Войдите, чтобы сохранять историю на всех устройствах
               </p>
               <Link
                 to="/auth"
-                className="shrink-0 text-sm text-accent hover:underline"
+                className="inline-flex min-h-11 items-center shrink-0 text-sm text-accent-ink hover:underline"
               >
                 Войти или зарегистрироваться →
               </Link>
@@ -540,11 +540,11 @@ export default function AppPage() {
           <section aria-labelledby="templates-heading" className="mb-8">
             <h2
               id="templates-heading"
-              className="mb-2 text-2xl font-semibold text-text-primary"
+              className="mb-2 text-2xl font-display text-ink"
             >
               Шаблоны
             </h2>
-            <p className="mb-5 text-sm text-text-secondary">
+            <p className="mb-5 text-sm text-muted">
               Выберите формат задачи, затем добавьте свои детали.
             </p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -573,27 +573,27 @@ export default function AppPage() {
                       setSelectedGeneration(null);
                       setSelectedTemplate(template);
                     }}
-                    className={`flex min-h-11 w-full min-w-0 items-start gap-3 rounded-2xl border bg-white/[0.03] p-5 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${active ? "border-accent" : "border-white/[0.08] hover:border-accent/30"}`}
+                    className={`flex min-h-11 w-full min-w-0 items-start gap-3 rounded-card border bg-white/80 p-5 text-left transition-[transform,opacity] duration-150 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 ${active ? "border-accent" : "border-ink/[0.08] hover:border-accent/30"}`}
                   >
                     <span
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${active ? "bg-accent/20 text-accent" : "bg-white/5 text-text-secondary"}`}
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${active ? "bg-accent/20 text-accent-ink" : "bg-ink/[0.04] text-muted"}`}
                     >
                       <Icon size={20} aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
-                        className={`block text-[15px] font-semibold ${active ? "text-accent" : "text-text-primary"}`}
+                        className={`block text-[15px] font-display ${active ? "text-accent-ink" : "text-ink"}`}
                       >
                         {template.name}
                       </span>
-                      <span className="mt-1 block text-[13px] leading-relaxed text-text-secondary">
+                      <span className="mt-1 block text-[13px] leading-relaxed text-muted">
                         {template.description}
                       </span>
                     </span>
                     <ArrowRight
                       size={16}
                       aria-hidden="true"
-                      className="mt-1 shrink-0 text-text-secondary"
+                      className="mt-1 shrink-0 text-muted"
                     />
                   </button>
                 );
@@ -631,7 +631,7 @@ export default function AppPage() {
             </div>
             <aside
               aria-labelledby="desktop-history-heading"
-              className="hidden min-w-0 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 xl:sticky xl:top-6 xl:block xl:max-h-[calc(100dvh-3rem)] xl:overflow-y-auto xl:overscroll-contain"
+              className="hidden min-w-0 rounded-card border border-ink/[0.08] bg-white/80 p-5 xl:sticky xl:top-6 xl:block xl:max-h-[calc(100dvh-3rem)] xl:overflow-y-auto xl:overscroll-contain"
             >
               {renderHistory(false)}
             </aside>
@@ -649,7 +649,7 @@ export default function AppPage() {
           aria-modal="true"
           aria-labelledby="mobile-history-heading"
           tabIndex={-1}
-          className="fixed inset-0 z-[90] overflow-y-auto overscroll-contain bg-bg-base px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] motion-reduce:transition-none xl:hidden"
+          className="fixed inset-0 z-[90] overflow-y-auto overscroll-contain bg-bg text-ink px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] motion-reduce:transition-none xl:hidden"
         >
           {renderHistory(true)}
         </div>

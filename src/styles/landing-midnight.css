@@ -325,3 +325,15 @@
   .midnight-landing .mn-footer { padding-top: 72px; }
   .midnight-landing .mn-footer-top { grid-template-columns: minmax(0,3fr) minmax(0,9fr); gap: 60px; }
 }
+
+/* Final responsive and keyboard refinements; never affect the workspace route. */
+.midnight-landing [role="dialog"] h2 { font-size: clamp(24px, 3vw, 30px); line-height: 1.25; }
+.midnight-landing .mn-feature-small { overflow-wrap: anywhere; }
+.midnight-landing .mn-hero-actions .mn-button { white-space: normal; }
+.midnight-landing .mn-preview-tabs button:focus-visible { outline-offset: -3px; }
+.midnight-landing .mn-tone-sample button:focus-visible { outline-offset: 3px; }
+.midnight-landing .mn-feature a:focus-visible, .midnight-landing .mn-footer a:focus-visible { border-radius: 3px; }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .midnight-landing .mn-feature-small { grid-column: span 6; }
+  .midnight-landing .mn-feature-small:last-child { grid-column: span 12; }
+}

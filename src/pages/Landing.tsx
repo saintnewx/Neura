@@ -25,7 +25,7 @@ export default function Landing() {
     <div ref={pageRef} className="midnight-landing">
       <a href="#main" className="mn-skip">Перейти к содержимому</a>
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <Hero />
 
         <Reveal>

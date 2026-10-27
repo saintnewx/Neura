@@ -149,3 +149,114 @@
   .midnight-landing .mn-hero-description { font-size: 19px; }
   .midnight-landing .mn-hero-actions { margin-top: 32px; }
 }
+
+/* Capabilities: a single asymmetrical grid of genuine product patterns. */
+.midnight-landing .mn-feature-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 16px; }
+.midnight-landing .mn-feature { min-width: 0; padding: 26px; border: 1px solid var(--mn-line); border-radius: 14px; background: var(--mn-elevated); transition: transform 220ms ease-out; }
+.midnight-landing .mn-feature-icon { color: var(--mn-muted); margin-bottom: 24px; }
+.midnight-landing .mn-feature h3 { margin-bottom: 14px; }
+.midnight-landing .mn-feature > p { max-width: 450px; color: var(--mn-muted); font-size: 15px; line-height: 1.65; }
+.midnight-landing .mn-context-sample { margin-top: 30px; padding: 20px; border: 1px solid var(--mn-line-strong); border-radius: 10px; background: var(--mn-base); }
+.midnight-landing .mn-sample-label { display: block; color: var(--mn-muted); font-size: 12px; line-height: 1.5; font-weight: 450; }
+.midnight-landing .mn-context-sample p { margin-top: 12px; font-size: 16px; max-width: 430px; }
+.midnight-landing .mn-context-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.midnight-landing .mn-context-tags span, .midnight-landing .mn-format-sample span { border: 1px solid var(--mn-line-strong); border-radius: 6px; padding: 4px 9px; font-size: 12px; color: var(--mn-muted); }
+.midnight-landing .mn-tone-sample { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.midnight-landing .mn-tone-sample button { min-height: 44px; padding: 8px 10px; border: 1px solid var(--mn-control); border-radius: 7px; font-size: 12px; color: var(--mn-muted); }
+.midnight-landing .mn-tone-sample button[aria-pressed="true"] { background: var(--mn-accent); border-color: var(--mn-accent); color: white; }
+.midnight-landing .mn-tone-sample button:hover:not([aria-pressed="true"]) { background: var(--mn-hover); color: var(--mn-text); }
+.midnight-landing .mn-feature .mn-tone-result { min-height: 100px; margin-block: 20px 12px; font-size: 16px; color: var(--mn-text); }
+.midnight-landing .mn-template-sample { list-style: none; padding: 0; margin: 24px 0 12px; }
+.midnight-landing .mn-template-sample li { display: flex; align-items: center; gap: 9px; padding-block: 12px; border-bottom: 1px solid var(--mn-line); font-size: 12px; }
+.midnight-landing .mn-template-sample svg { flex-shrink: 0; color: var(--mn-muted); }
+.midnight-landing .mn-template-sample svg:last-child { margin-left: auto; }
+.midnight-landing .mn-history-sample { margin-top: 24px; }
+.midnight-landing .mn-history-sample > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; padding-block: 14px; border-bottom: 1px solid var(--mn-line); font-size: 13px; }
+.midnight-landing .mn-history-sample small { color: var(--mn-muted); font-size: 11px; }
+.midnight-landing .mn-format-sample { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.midnight-landing .mn-feature .mn-feature-footnote { margin-top: 22px; font-size: 13px; }
+.midnight-landing .mn-story { border-block: 1px solid var(--mn-line); }
+.midnight-landing .mn-story-heading { display: grid; gap: 4px; margin-bottom: 36px; }
+.midnight-landing .mn-story-layout { display: grid; gap: 28px; }
+.midnight-landing .mn-format-choices { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.midnight-landing .mn-format-choices button { display: flex; min-width: 0; align-items: center; justify-content: space-between; min-height: 64px; text-align: left; padding: 12px; border: 1px solid var(--mn-control); border-radius: 10px; font-size: 16px; font-weight: 550; }
+.midnight-landing .mn-format-choices small { display: block; color: var(--mn-muted); font-size: 11px; font-weight: 400; margin-top: 2px; }
+.midnight-landing .mn-format-choices svg { flex-shrink: 0; margin-left: 4px; width: 16px; }
+.midnight-landing .mn-format-choices button[aria-pressed="true"] { background: var(--mn-elevated); border-color: var(--mn-accent-text); }
+.midnight-landing .mn-format-choices button[aria-pressed="true"] svg { color: var(--mn-accent-text); }
+.midnight-landing .mn-story-choices > a { margin-top: 20px; }
+.midnight-landing .mn-story-example { min-width: 0; border: 1px solid var(--mn-line-strong); border-radius: 14px; background: var(--mn-elevated); }
+.midnight-landing .mn-story-request { padding: 24px; border-bottom: 1px solid var(--mn-line); }
+.midnight-landing .mn-story-request p { margin-top: 10px; font-size: 14px; line-height: 1.6; }
+.midnight-landing .mn-story-draft { min-height: 390px; padding: 24px; animation: mn-content-in 200ms ease-out; }
+.midnight-landing .mn-story-draft h3 { margin-block: 20px 16px; font-size: 24px; }
+.midnight-landing .mn-story-draft > p { font-size: 16px; line-height: 1.8; white-space: pre-line; }
+.midnight-landing .mn-story-disclosure { padding: 16px 24px; border-top: 1px solid var(--mn-line); color: var(--mn-muted); font-size: 12px; }
+
+/* Shared generator stays byte-for-byte unchanged; its dark skin is landing-only. */
+.midnight-landing .mn-generator { padding-block: 72px; }
+.midnight-landing .mn-generator-heading { margin-bottom: 36px; }
+.midnight-landing #demo { background: transparent; padding-block: 0; }
+.midnight-landing #demo > div { max-width: 1280px; padding-inline: 20px; }
+.midnight-landing #demo > div > div:first-child { display: none; } /* Replaced by the truthful landing heading above. */
+.midnight-landing #demo > div > .grid { gap: 0; border: 1px solid var(--mn-line-strong); border-radius: 16px; overflow: hidden; }
+.midnight-landing #demo > div > .grid > div { min-width: 0; border: 0; border-radius: 0; background: var(--mn-elevated); padding: 24px; }
+.midnight-landing #demo > div > .grid > div + div { border-top: 1px solid var(--mn-line-strong); background: var(--mn-base); }
+.midnight-landing #demo .text-ink { color: var(--mn-text); }
+.midnight-landing #demo .text-muted { color: var(--mn-muted); }
+.midnight-landing #demo .text-accent-ink { color: var(--mn-accent-text); }
+.midnight-landing #demo .text-error, .midnight-landing .mn-save-error { color: var(--mn-error); }
+.midnight-landing #demo .font-display { font-weight: 550; }
+.midnight-landing #demo :is(textarea, select) { width: 100%; min-width: 0; border: 1px solid var(--mn-control); border-radius: 8px; background: var(--mn-base); color: var(--mn-text); font-size: 16px; line-height: 1.6; }
+.midnight-landing #demo textarea::placeholder { color: var(--mn-muted); opacity: 1; }
+.midnight-landing #demo textarea { resize: vertical; }
+.midnight-landing #demo select { appearance: auto; padding-right: 12px; min-height: 48px; }
+.midnight-landing #demo :is(textarea, select):focus-visible { border-color: var(--mn-accent-text); outline: 2px solid var(--mn-accent-text); outline-offset: 3px; }
+.midnight-landing #demo button { min-height: 44px; border-radius: 8px; }
+.midnight-landing #demo button.bg-accent { color: white; background: var(--mn-accent); font-size: 16px !important; min-height: 52px !important; font-weight: 550; }
+.midnight-landing #demo button.bg-accent:hover:not(:disabled) { background: #7060BF; transform: translateY(-1px); }
+.midnight-landing #demo button.border { border-color: var(--mn-control); }
+.midnight-landing #demo button.border:hover:not(:disabled) { background: var(--mn-hover); }
+.midnight-landing #demo span.border { border-color: var(--mn-line-strong); letter-spacing: .04em !important; }
+.midnight-landing #demo .bg-accent:not(button) { background: var(--mn-accent-text); }
+.midnight-landing #demo [class~="bg-ink/10"] { background: var(--mn-hover); }
+.midnight-landing .mn-save-error { padding-bottom: 32px; font-size: 14px; }
+.midnight-landing .mn-save-error .mn-button { margin-top: 12px; }
+
+/* The existing limit dialog remains shared; only its landing appearance changes. */
+.midnight-landing > .fixed { background: rgb(3 7 15 / .78); }
+.midnight-landing [role="dialog"] { background: var(--mn-elevated); color: var(--mn-text); border: 1px solid var(--mn-line-strong); border-radius: 16px; box-shadow: 0 20px 50px rgb(0 0 0 / .2); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.midnight-landing [role="dialog"] .text-muted { color: var(--mn-muted); }
+.midnight-landing [role="dialog"] .text-accent-ink { color: var(--mn-accent-text); background: var(--mn-base); border-color: var(--mn-line-strong); }
+.midnight-landing [role="dialog"] .btn-primary { background: var(--mn-accent); color: white; border-radius: 10px; font-size: 15px; }
+.midnight-landing [role="dialog"] .btn-secondary { color: var(--mn-text); border-color: var(--mn-control); border-radius: 10px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .midnight-landing .mn-feature:hover { transform: translateY(-3px); border-color: var(--mn-line-strong); }
+}
+@media (min-width: 768px) {
+  .midnight-landing .mn-feature-grid { grid-template-columns: repeat(12,minmax(0,1fr)); }
+  .midnight-landing .mn-feature-context { grid-column: span 7; }
+  .midnight-landing .mn-feature-tone { grid-column: span 5; }
+  .midnight-landing .mn-feature-small { grid-column: span 4; }
+  .midnight-landing .mn-feature { padding: 28px; }
+  .midnight-landing .mn-feature-small h3 { font-size: 22px; }
+  .midnight-landing .mn-story-heading { grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; margin-bottom: 48px; }
+  .midnight-landing .mn-story-layout { grid-template-columns: minmax(0,4fr) minmax(0,8fr); gap: 40px; }
+  .midnight-landing .mn-format-choices { grid-template-columns: minmax(0,1fr); }
+  .midnight-landing .mn-format-choices button { padding: 16px 20px; }
+  .midnight-landing .mn-story-draft { min-height: 330px; padding: 32px; }
+  .midnight-landing .mn-story-request { padding: 24px 32px; }
+  .midnight-landing .mn-story-disclosure { padding-inline: 32px; }
+  .midnight-landing .mn-generator { padding-block: 96px; }
+  .midnight-landing #demo > div { padding-inline: 36px; }
+}
+@media (min-width: 1024px) {
+  .midnight-landing .mn-feature { padding: 32px; }
+  .midnight-landing .mn-feature-small h3 { font-size: 24px; }
+  .midnight-landing .mn-generator { padding-block: 120px; }
+  .midnight-landing .mn-generator-heading { margin-bottom: 48px; }
+  .midnight-landing #demo > div { padding-inline: 48px; }
+  .midnight-landing #demo > div > .grid { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .midnight-landing #demo > div > .grid > div { grid-column: auto; padding: 32px; }
+  .midnight-landing #demo > div > .grid > div + div { border-top: 0; border-left: 1px solid var(--mn-line-strong); }
+}

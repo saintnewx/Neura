@@ -4,6 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Landing-only namespace; workspace and authentication retain their theme.
+        midnight: {
+          base: "#0B1220",
+          elevated: "#131B2E",
+          hover: "#1A2438",
+          foreground: "#F5F7FA",
+          muted: "#8B94A8",
+          tertiary: "#5A6478",
+          accent: "#6554B5",
+          "accent-soft": "#8B7CD9",
+          line: "rgba(255,255,255,0.06)",
+        },
         bg: "#FAF8F5",
         ink: "#222222",
         muted: "#6A6A6A",

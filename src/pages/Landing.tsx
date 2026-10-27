@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import "../styles/landing-midnight.css";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import SocialProof from "../components/SocialProof";
@@ -20,7 +21,8 @@ export default function Landing() {
   const [, setGeneratorBusy] = useState(false);
 
   return (
-    <div ref={pageRef}>
+    <div ref={pageRef} className="midnight-landing">
+      <a href="#main" className="mn-skip">Перейти к содержимому</a>
       <Header />
       <main id="main">
         <Hero />

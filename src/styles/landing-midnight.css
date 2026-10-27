@@ -1,0 +1,68 @@
+/* Neura Midnight Product Minimalism. Every selector stays within the landing. */
+.midnight-landing {
+  --mn-base: #0B1220;
+  --mn-elevated: #131B2E;
+  --mn-hover: #1A2438;
+  --mn-text: #F5F7FA;
+  --mn-muted: #8B94A8;
+  --mn-tertiary: #5A6478;
+  --mn-accent: #6554B5;
+  --mn-accent-text: #8B7CD9;
+  --mn-line: rgba(255,255,255,.06);
+  --mn-line-strong: rgba(255,255,255,.14);
+  --mn-control: #65738B;
+  --mn-error: #FFADAD;
+  min-height: 100%;
+  background: var(--mn-base);
+  color: var(--mn-text);
+  color-scheme: dark;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.65;
+  isolation: isolate;
+}
+.midnight-landing *, .midnight-landing *::before, .midnight-landing *::after { box-sizing: border-box; }
+.midnight-landing ::selection { background: var(--mn-accent); color: white; }
+.midnight-landing :focus-visible { outline: 2px solid var(--mn-accent-text); outline-offset: 4px; }
+.midnight-landing :is(section, div)[id] { scroll-margin-top: 96px; }
+.midnight-landing h1, .midnight-landing h2, .midnight-landing h3 { color: var(--mn-text); }
+.midnight-landing h2 { font-size: clamp(32px, 4vw, 50px); font-weight: 650; line-height: 1.16; letter-spacing: -.035em; text-wrap: balance; }
+.midnight-landing h3 { font-size: 25px; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+.midnight-landing .mn-container { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: 20px; }
+.midnight-landing .mn-section { padding-block: 72px; }
+.midnight-landing .mn-label { margin-bottom: 16px; color: var(--mn-muted); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.midnight-landing .mn-lead { max-width: 580px; margin-top: 22px; color: var(--mn-muted); font-size: 17px; line-height: 1.65; }
+.midnight-landing .mn-section-heading { margin-bottom: 36px; max-width: 680px; }
+.midnight-landing .mn-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 12px 22px; border: 1px solid var(--mn-control);
+  border-radius: 10px; color: var(--mn-text); background: transparent;
+  font-size: 15px; font-weight: 550; line-height: 1.4; text-align: center;
+  transition: transform 180ms ease-out, opacity 180ms ease-out;
+}
+.midnight-landing .mn-button:hover { background: var(--mn-hover); }
+.midnight-landing .mn-button:active { transform: translateY(1px); }
+.midnight-landing .mn-button-primary { background: var(--mn-accent); border-color: var(--mn-accent); color: #fff; }
+.midnight-landing .mn-button-primary:hover { background: #7060BF; border-color: #7060BF; }
+.midnight-landing .mn-button:disabled { cursor: not-allowed; background: var(--mn-elevated); color: var(--mn-muted); border-color: var(--mn-line-strong); transform: none; }
+.midnight-landing .mn-button svg { width: 18px; height: 18px; flex-shrink: 0; }
+.midnight-landing .mn-inline-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--mn-accent-text); font-size: 14px; font-weight: 500; text-underline-offset: 5px; }
+.midnight-landing .mn-inline-link:hover { text-decoration: underline; }
+.midnight-landing .mn-skip { position: fixed; top: 8px; left: 12px; z-index: 200; padding: 12px 20px; border-radius: 8px; background: var(--mn-text); color: var(--mn-base); transform: translateY(-150%); }
+.midnight-landing .mn-skip:focus { transform: none; }
+/* Existing reveal implementation is shared. Only its landing presentation changes. */
+.midnight-landing .warm-reveal { transition-duration: 380ms !important; will-change: auto !important; }
+@media (min-width: 768px) {
+  .midnight-landing .mn-container { padding-inline: 36px; }
+  .midnight-landing .mn-section { padding-block: 96px; }
+  .midnight-landing .mn-section-heading { margin-bottom: 48px; }
+  .midnight-landing .mn-lead { font-size: 18px; }
+}
+@media (min-width: 1024px) {
+  .midnight-landing .mn-container { padding-inline: 48px; }
+  .midnight-landing .mn-section { padding-block: 120px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .midnight-landing *, .midnight-landing *::before, .midnight-landing *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .midnight-landing .warm-reveal { opacity: 1 !important; transform: none !important; }
+}

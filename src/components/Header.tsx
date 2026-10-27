@@ -12,9 +12,9 @@ export default function Header() {
     <>
       <header className="mn-header">
         <div className="mn-container mn-header-inner">
-          <Link to="/" className="mn-brand" aria-label="Neura — на главную">
+          <a href="/" className="mn-brand" aria-label="Neura — на главную">
             <span className="mn-brand-mark" aria-hidden="true">n</span>Neura
-          </Link>
+          </a>
           <nav className="mn-desktop-nav" aria-label="Основная навигация">
             <a href="#features">Возможности</a>
             <a href="#story">Как работает</a>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, FileText, History, LayoutTemplate, MessageSquare, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, Check, FileText, History, LayoutTemplate, MessageSquare, SlidersHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const TONE_EXAMPLES = [
@@ -35,7 +35,7 @@ export default function BentoGrid() {
             <h3>Тот самый тон.</h3>
             <p>Выберите интонацию под задачу. В рабочей области доступны шесть вариантов.</p>
             <div className="mn-tone-sample" role="group" aria-label="Тон демонстрационного текста">
-              {TONE_EXAMPLES.map((item, index) => <button key={item.tone} type="button" aria-pressed={tone === index} onClick={() => setTone(index)}>{item.tone}</button>)}
+              {TONE_EXAMPLES.map((item, index) => <button key={item.tone} type="button" aria-pressed={tone === index} onClick={() => setTone(index)}><Check size={13} aria-hidden="true" className={tone === index ? "" : "invisible"} />{item.tone}</button>)}
             </div>
             <p className="mn-tone-result" aria-live="polite">{TONE_EXAMPLES[tone].text}</p>
             <span className="mn-sample-label">Заранее подготовленные примеры</span>

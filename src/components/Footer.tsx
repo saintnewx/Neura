@@ -39,11 +39,11 @@ export default function Footer() {
       <div className="mn-container">
         <div className="mn-footer-top">
           <div className="mn-footer-brand">
-            <Link to="/" className="mn-brand" aria-label="Neura — на главную"><span className="mn-brand-mark" aria-hidden="true">n</span>Neura</Link>
+            <a href="/" className="mn-brand" aria-label="Neura — на главную"><span className="mn-brand-mark" aria-hidden="true">n</span>Neura</a>
             <p>Больше идей.<br />Меньше рутины.</p>
           </div>
           <nav aria-label="Навигация в подвале" className="mn-footer-nav">
-            {groups.map(group => <div key={group.title}><h3>{group.title}</h3><ul>{group.links.map(([label, href]) => <li key={label}><Link to={href}>{label}</Link></li>)}</ul></div>)}
+            {groups.map(group => <div key={group.title}><h3>{group.title}</h3><ul>{group.links.map(([label, href]) => <li key={label}>{href.startsWith("/#") ? <a href={href}>{label}</a> : <Link to={href}>{label}</Link>}</li>)}</ul></div>)}
           </nav>
         </div>
         <div className="mn-footer-disclosures">

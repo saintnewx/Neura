@@ -1,112 +1,29 @@
-import { Quote, Star } from "lucide-react";
-import Reveal from "./Reveal";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const testimonials = [
-  {
-    quote:
-      "Раньше полдня уходило на первые строки. Теперь есть черновик за минуту — и больше времени на стратегию.",
-    initials: "АК",
-    name: "Анна Ковалева",
-    role: "SMM-менеджер · Layers",
-  },
-  {
-    quote:
-      "Наконец-то AI, который не пишет как AI. Задаю контекст и тон — получаю текст, который хочется дочитать.",
-    initials: "МС",
-    name: "Максим Соколов",
-    role: "Head of Marketing · Quotient",
-  },
-  {
-    quote:
-      "Посты, письма, рекламные креативы — всё в одном месте. Neura стала нашим любимым участником команды.",
-    initials: "ЕД",
-    name: "Елена Дмитриева",
-    role: "Основатель · Catalog",
-  },
+// Unverified endorsements are replaced with supported workflows, not new claims.
+const AUDIENCES = [
+  { id: "01", name: "Маркетологам", detail: "Подготовить варианты рекламного текста, письма или оффера на основе одного задания.", format: "Реклама · Email · Оффер" },
+  { id: "02", name: "SMM и авторам", detail: "Найти первую строку поста, сменить интонацию или собрать черновик сценария для Reels.", format: "Пост · Reels · Контент-план" },
+  { id: "03", name: "Малому бизнесу", detail: "Рассказать о продукте своими словами: передать факты, выбрать тон и доработать черновик.", format: "Описание товара · Brand Bio" },
 ];
-
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="relative bg-bg py-24 md:py-40">
-      <div className="max-w-6xl mx-auto px-6">
-        <Reveal>
-          <div className="max-w-3xl mb-16 md:mb-24">
-            <p className="text-label uppercase text-muted mb-4">
-              Создано для тех, кто создаёт
-            </p>
-            <h2
-              className="text-ink font-display"
-              style={{
-                fontSize: "32px",
-                lineHeight: 1,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Что говорят маркетологи
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((item, i) => (
-            <Reveal key={item.name} delay={i * 100}>
-              <figure className="rounded-card bg-white/80 border border-ink/[0.08] p-8 flex flex-col transition-transform duration-200 motion-reduce:transition-none hover:bg-white hover:border-ink/[0.14] m-0 h-full">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex gap-1 text-accent-ink" aria-label="5 из 5">
-                    {Array.from({ length: 5 }, (_, index) => (
-                      <Star
-                        key={index}
-                        size={14}
-                        fill="currentColor"
-                        aria-hidden="true"
-                      />
-                    ))}
-                  </div>
-                  <Quote size={24} className="text-ink/10" />
-                </div>
-
-                <blockquote
-                  className="text-ink flex-1 mb-8"
-                  style={{ fontSize: "16px", lineHeight: 1.8 }}
-                >
-                  «{item.quote}»
-                </blockquote>
-
-                <figcaption className="flex items-center gap-3">
-                  <span
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink/[0.04] text-accent-ink font-display"
-                    style={{ fontSize: "13px" }}
-                  >
-                    {item.initials}
-                  </span>
-                  <div>
-                    <p
-                      className="text-ink font-display"
-                      style={{ fontSize: "14px" }}
-                    >
-                      {item.name}
-                    </p>
-                    <p
-                      className="text-muted mt-0.5"
-                      style={{ fontSize: "12px" }}
-                    >
-                      {item.role}
-                    </p>
-                  </div>
-                </figcaption>
-              </figure>
-            </Reveal>
+    <section id="testimonials" className="mn-section mn-audience" aria-labelledby="audience-title">
+      <div className="mn-container">
+        <div className="mn-section-heading">
+          <p className="mn-label">Для вашей работы</p>
+          <h2 id="audience-title">Есть что сказать.<br />Найдём форму.</h2>
+        </div>
+        <div className="mn-audience-list">
+          {AUDIENCES.map(item => (
+            <article key={item.id}><span className="mn-audience-index" aria-hidden="true">{item.id}</span><h3>{item.name}</h3><p>{item.detail}</p><span className="mn-audience-format">{item.format}</span></article>
           ))}
         </div>
-
-        <Reveal delay={300}>
-          <p
-            className="mt-6 text-muted"
-            style={{ fontSize: "12px" }}
-          >
-            Отзывы и логотипы — демонстрационные примеры.
-          </p>
-        </Reveal>
+        <div className="mn-start">
+          <div><h3>Начните с одной идеи.</h3><p>Вы выбираете, что сказать. Neura помогает с формулировкой.</p></div>
+          <Link to="/app" className="mn-button mn-button-primary">Открыть Neura <ArrowRight aria-hidden="true" /></Link>
+        </div>
       </div>
     </section>
   );

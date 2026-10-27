@@ -1,172 +1,71 @@
-import { Brain, Zap, Sparkles, TrendingUp, Plug } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Check, FileText, History, LayoutTemplate, MessageSquare, SlidersHorizontal } from "lucide-react";
+import { Link } from "react-router-dom";
 
+const TONE_EXAMPLES = [
+  { tone: "Дружелюбный", text: "Давайте сделаем паузу. Кофе и немного времени для себя — уже хороший план." },
+  { tone: "Официальный", text: "Приглашаем познакомиться с меню кофейни и выбрать напиток по вашему вкусу." },
+  { tone: "Дерзкий", text: "Дела подождут. Ваш кофе — нет. Самое время переключиться." },
+];
+
+// UI samples illustrate existing controls; they never submit generation requests.
 export default function BentoGrid() {
+  const [tone, setTone] = useState(0);
   return (
-    <section
-      id="features"
-      className="relative bg-bg py-24 md:py-40"
-    >
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Заголовок секции */}
-        <div className="max-w-3xl mb-16 md:mb-24">
-          <p className="text-label uppercase text-muted mb-4">
-            Возможности
-          </p>
-          <h2
-            className="text-ink font-display"
-            style={{
-              fontSize: "32px",
-              lineHeight: 1,
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Почему Neura
-          </h2>
-          <p
-            className="text-muted mt-6 max-w-copy"
-            style={{ fontSize: "19px", lineHeight: 1.6 }}
-          >
-            Всё, что нужно маркетологу — в одном месте. Без переключений,
-            без пустых листов, без рутины.
-          </p>
+    <section id="features" className="mn-section" aria-labelledby="features-title">
+      <div className="mn-container">
+        <div className="mn-section-heading">
+          <p className="mn-label">Возможности</p>
+          <h2 id="features-title">Место, где идеи<br className="hidden sm:block" /> обретают форму.</h2>
+          <p className="mn-lead">От первого задания до сохранённого черновика. Всё нужное для работы с текстом — рядом.</p>
         </div>
-
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-          {/* Карточка 1 — большая */}
-          <div className="md:col-span-4 md:row-span-2 rounded-card-lg bg-glass-strong shadow-glass border border-ink/[0.08] p-8 md:p-10 flex flex-col justify-between min-h-[320px] md:min-h-[420px] motion-safe:hover:-translate-y-1 transition-transform duration-200 motion-reduce:transition-none hover:bg-white hover:border-ink/[0.14]">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-white border border-ink/[0.08] flex items-center justify-center mb-6">
-                <Brain size={22} className="text-accent-ink" />
-              </div>
-              <h3
-                className="text-ink font-display mb-3"
-                style={{ fontSize: "28px", letterSpacing: "-0.01em" }}
-              >
-                Понимает контекст
-              </h3>
-              <p
-                className="text-muted max-w-md"
-                style={{ fontSize: "17px", lineHeight: 1.6 }}
-              >
-                Ваш продукт, аудитория, цель, тон. Neura анализирует задачу
-                и превращает её в текст, который говорит с вашими клиентами.
-              </p>
+        <div className="mn-feature-grid">
+          <article className="mn-feature mn-feature-context">
+            <MessageSquare className="mn-feature-icon" size={22} aria-hidden="true" />
+            <h3>Ваши детали.<br />Ваш контекст.</h3>
+            <p>Расскажите о продукте и аудитории. Передайте AI факты, на которые должен опираться текст.</p>
+            <div className="mn-context-sample">
+              <span className="mn-sample-label">Пример дополнительного контекста</span>
+              <p>Кофейня в Алматы. Аудитория — студенты. Есть тихий зал для работы.</p>
+              <div className="mn-context-tags"><span>Продукт</span><span>Аудитория</span><span>Особенности</span></div>
             </div>
-
-            {/* Мини-визуал: связная сеть */}
-            <div className="mt-8 relative h-32 md:h-40">
-              <svg aria-hidden="true" viewBox="0 0 400 160" className="w-full h-full" fill="none">
-                <line x1="80" y1="80" x2="160" y2="40" stroke="rgb(34 34 34 / 0.2)" strokeWidth="1" />
-                <line x1="80" y1="80" x2="160" y2="120" stroke="rgb(34 34 34 / 0.2)" strokeWidth="1" />
-                <line x1="160" y1="40" x2="240" y2="80" stroke="rgb(34 34 34 / 0.2)" strokeWidth="1" />
-                <line x1="160" y1="120" x2="240" y2="80" stroke="rgb(34 34 34 / 0.2)" strokeWidth="1" />
-                <line x1="240" y1="80" x2="320" y2="40" stroke="rgb(34 34 34 / 0.2)" strokeWidth="1" />
-                <line x1="240" y1="80" x2="320" y2="120" stroke="rgb(34 34 34 / 0.2)" strokeWidth="1" />
-
-                <circle cx="80" cy="80" r="6" fill="rgb(34 34 34 / 0.8)" />
-                <circle cx="160" cy="40" r="4" fill="rgb(34 34 34 / 0.5)" />
-                <circle cx="160" cy="120" r="4" fill="rgb(34 34 34 / 0.5)" />
-                <circle cx="240" cy="80" r="5" fill="rgb(34 34 34 / 0.7)" />
-                <circle cx="320" cy="40" r="4" fill="rgb(34 34 34 / 0.5)" />
-                <circle cx="320" cy="120" r="4" fill="rgb(34 34 34 / 0.5)" />
-              </svg>
+          </article>
+          <article className="mn-feature mn-feature-tone">
+            <SlidersHorizontal className="mn-feature-icon" size={22} aria-hidden="true" />
+            <h3>Тот самый тон.</h3>
+            <p>Выберите интонацию под задачу. В рабочей области доступны шесть вариантов.</p>
+            <div className="mn-tone-sample" role="group" aria-label="Тон демонстрационного текста">
+              {TONE_EXAMPLES.map((item, index) => <button key={item.tone} type="button" aria-pressed={tone === index} onClick={() => setTone(index)}><Check size={13} aria-hidden="true" className={tone === index ? "" : "invisible"} />{item.tone}</button>)}
             </div>
-          </div>
-
-          {/* Карточка 2 — скорость */}
-          <div className="md:col-span-2 rounded-card bg-white/80 border border-ink/[0.08] p-8 flex flex-col justify-between min-h-[200px] transition-transform duration-200 motion-reduce:transition-none hover:bg-white hover:border-ink/[0.14]">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-ink/[0.08] flex items-center justify-center mb-6">
-              <Zap size={22} className="text-accent-ink" />
+            <p className="mn-tone-result" aria-live="polite">{TONE_EXAMPLES[tone].text}</p>
+            <span className="mn-sample-label">Заранее подготовленные примеры</span>
+          </article>
+          <article className="mn-feature mn-feature-small">
+            <LayoutTemplate className="mn-feature-icon" size={22} aria-hidden="true" />
+            <h3>Начните с задачи.</h3>
+            <p>12 шаблонов для постов, писем, офферов и других маркетинговых материалов.</p>
+            <ul className="mn-template-sample" aria-label="Примеры доступных шаблонов">
+              {["Instagram Post", "Email Campaign", "Product Description"].map(name => <li key={name}><FileText size={15} aria-hidden="true" />{name}<ArrowRight size={14} aria-hidden="true" /></li>)}
+            </ul>
+            <Link to="/app" className="mn-inline-link">Открыть шаблоны <ArrowRight size={16} aria-hidden="true" /></Link>
+          </article>
+          <article className="mn-feature mn-feature-small">
+            <History className="mn-feature-icon" size={22} aria-hidden="true" />
+            <h3>Возвращайтесь к идеям.</h3>
+            <p>Сохраняйте завершённые генерации. После входа история доступна на других устройствах.</p>
+            <div className="mn-history-sample">
+              <span className="mn-sample-label">Пример истории</span>
+              <div><span>Пост об осеннем меню</span><small>Пост</small></div>
+              <div><span>Письмо о новом продукте</span><small>Email</small></div>
             </div>
-            <div>
-              <div
-                className="text-ink font-display mb-2"
-                style={{ fontSize: "56px", lineHeight: 1, letterSpacing: "-0.01em" }}
-              >
-                0.8s
-              </div>
-              <p className="text-muted" style={{ fontSize: "15px" }}>
-                среднее время до готового текста
-              </p>
-            </div>
-          </div>
-
-          {/* Карточка 3 — тон и стиль */}
-          <div className="md:col-span-2 rounded-card bg-white/80 border border-ink/[0.08] p-8 flex flex-col justify-between min-h-[200px] transition-transform duration-200 motion-reduce:transition-none hover:bg-white hover:border-ink/[0.14]">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-ink/[0.08] flex items-center justify-center mb-6">
-              <Sparkles size={22} className="text-accent-ink" />
-            </div>
-            <div>
-              <h3
-                className="text-ink font-display mb-3"
-                style={{ fontSize: "18px" }}
-              >
-                Тон и стиль
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {["Дружелюбный", "Продающий", "Официальный", "Дерзкий"].map((tone) => (
-                  <span
-                    key={tone}
-                    className="text-muted border border-ink/[0.08] rounded-full px-3 py-1"
-                    style={{ fontSize: "12px" }}
-                  >
-                    {tone}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Карточка 4 — тренды */}
-          <div className="md:col-span-3 rounded-card bg-white/80 border border-ink/[0.08] p-8 flex flex-col justify-between min-h-[220px] transition-transform duration-200 motion-reduce:transition-none hover:bg-white hover:border-ink/[0.14]">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-ink/[0.08] flex items-center justify-center mb-6">
-              <TrendingUp size={22} className="text-accent-ink" />
-            </div>
-            <div>
-              <h3
-                className="text-ink font-display mb-2"
-                style={{ fontSize: "18px" }}
-              >
-                Актуальные тренды
-              </h3>
-              <p
-                className="text-muted mb-4"
-                style={{ fontSize: "15px", lineHeight: 1.5 }}
-              >
-                Neura учитывает, что работает сейчас — не то, что работало год назад.
-              </p>
-              <svg aria-hidden="true" viewBox="0 0 300 60" className="w-full h-12" fill="none">
-                <path
-                  d="M0 50 L50 42 L100 46 L150 30 L200 20 L250 15 L300 8"
-                  stroke="rgb(34 34 34 / 0.6)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-          </div>
-
-          {/* Карточка 5 — интеграции */}
-          <div className="md:col-span-3 rounded-card bg-white/80 border border-ink/[0.08] p-8 flex flex-col justify-between min-h-[220px] transition-transform duration-200 motion-reduce:transition-none hover:bg-white hover:border-ink/[0.14]">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-ink/[0.08] flex items-center justify-center mb-6">
-              <Plug size={22} className="text-accent-ink" />
-            </div>
-            <div>
-              <h3
-                className="text-ink font-display mb-2"
-                style={{ fontSize: "18px" }}
-              >
-                Готово к работе
-              </h3>
-              <p
-                className="text-muted"
-                style={{ fontSize: "15px", lineHeight: 1.5 }}
-              >
-                Копируй в Telegram, Instagram, LinkedIn — или скачивай в .txt.
-              </p>
-            </div>
-          </div>
+          </article>
+          <article className="mn-feature mn-feature-small">
+            <FileText className="mn-feature-icon" size={22} aria-hidden="true" />
+            <h3>Черновик — только начало.</h3>
+            <p>Получайте ответ по мере генерации. Копируйте готовый текст или скачивайте TXT для дальнейшей работы.</p>
+            <div className="mn-format-sample"><span>Пост</span><span>Email</span><span>Реклама</span><span>Reels</span></div>
+            <p className="mn-feature-footnote">Перед публикацией проверьте факты и отредактируйте текст.</p>
+          </article>
         </div>
       </div>
     </section>

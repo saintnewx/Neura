@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import Reveal from "./Reveal";
 
 // Facts describe the currently available demo, not future paid plans.
 const FAQ_ITEMS = [
@@ -14,7 +13,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Какая AI-модель используется?",
-    a: "Генерация работает через NVIDIA NIM с моделью openai/gpt-oss-20b. Задача и выбранный тон передаются сервису для получения ответа. Neura не даёт отдельных гарантий об использовании данных провайдером для обучения — перед отправкой учитывайте его условия обработки данных.",
+    a: "Генерация работает через NVIDIA NIM с моделью openai/gpt-oss-20b. Задача, дополнительный контекст и выбранный тон передаются сервису для получения ответа. Neura не даёт отдельных гарантий об использовании данных провайдером для обучения — перед отправкой учитывайте его условия обработки данных.",
   },
   {
     q: "Можно ли использовать тексты для коммерческих задач?",
@@ -32,79 +31,23 @@ const FAQ_ITEMS = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
-
   return (
-    <section id="faq" className="relative bg-bg py-24 md:py-40">
-      <div className="max-w-3xl mx-auto px-6">
-        <Reveal>
-          <div className="max-w-3xl mb-16 md:mb-24">
-            <p className="text-xs font-display tracking-[0.2em] uppercase text-muted mb-4">
-              Вопросы
-            </p>
-            <h2
-              className="text-ink font-display"
-              style={{
-                fontSize: "32px",
-                lineHeight: 1,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Частые вопросы
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="max-w-3xl">
-          {FAQ_ITEMS.map((item, i) => {
-            const isOpen = open === i;
+    <section id="faq" className="mn-section mn-faq" aria-labelledby="faq-title">
+      <div className="mn-container mn-faq-layout">
+        <div><p className="mn-label">Без недосказанности</p><h2 id="faq-title">Хорошие<br />вопросы.</h2><p className="mn-lead">Что важно знать перед началом работы.</p></div>
+        <div className="mn-faq-list">
+          {FAQ_ITEMS.map((item, index) => {
+            const isOpen = open === index;
             return (
-              <Reveal key={item.q} delay={i * 60}>
-                <div className="border-b border-ink/[0.08]">
-                  <h3>
-                    <button
-                      id={`faq-question-${i}`}
-                      type="button"
-                      onClick={() => setOpen(isOpen ? null : i)}
-                      className="min-h-11 w-full flex items-center justify-between gap-6 py-6 text-left transition-transform duration-200 motion-reduce:transition-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 group"
-                      aria-expanded={isOpen}
-                      aria-controls={`faq-answer-${i}`}
-                    >
-                      <span
-                        className={`font-display transition-transform duration-200 motion-reduce:transition-none motion-reduce:transition-none ${
-                          isOpen
-                            ? "text-accent-ink"
-                            : "text-ink group-hover:text-accent-ink"
-                        }`}
-                        style={{ fontSize: "18px", lineHeight: 1.4 }}
-                      >
-                        {item.q}
-                      </span>
-                      <Plus
-                        size={20}
-                        aria-hidden="true"
-                        className={`flex-shrink-0 text-accent-ink transition-transform duration-200 motion-reduce:transition-none motion-reduce:transition-none ${
-                          isOpen ? "rotate-45" : "rotate-0"
-                        }`}
-                      />
-                    </button>
-                  </h3>
-
-                  <div
-                    id={`faq-answer-${i}`}
-                    role="region"
-                    aria-labelledby={`faq-question-${i}`}
-                    className="grid grid-rows-[1fr] opacity-100 transition-[grid-template-rows,opacity,visibility] duration-[400ms] ease-out [&[hidden]]:!grid [&[hidden]]:grid-rows-[0fr] [&[hidden]]:opacity-0 [&[hidden]]:invisible motion-reduce:transition-none"
-                    hidden={!isOpen}
-                  >
-                    <div className="min-h-0 overflow-hidden"><p
-                      className="text-muted pb-6 pr-0 sm:pr-8"
-                      style={{ fontSize: "16px", lineHeight: 1.7 }}
-                    >
-                      {item.a}
-                    </p></div>
-                  </div>
-                </div>
-              </Reveal>
+              <div className="mn-faq-item" key={item.q}>
+                <h3>
+                  <button id={`faq-question-${index}`} type="button" onClick={() => setOpen(isOpen ? null : index)}
+                    aria-expanded={isOpen} aria-controls={`faq-answer-${index}`}>
+                    <span>{item.q}</span><Plus size={20} aria-hidden="true" />
+                  </button>
+                </h3>
+                <div id={`faq-answer-${index}`} role="region" aria-labelledby={`faq-question-${index}`} className="mn-faq-answer" hidden={!isOpen}><p>{item.a}</p></div>
+              </div>
             );
           })}
         </div>

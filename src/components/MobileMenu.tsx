@@ -35,7 +35,7 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
       }
     };
     const handleResize = () => {
-      if (window.innerWidth >= 768) onClose();
+      if (window.innerWidth >= 1024) onClose();
     };
     window.addEventListener("keydown", handleKey);
     window.addEventListener("resize", handleResize);
@@ -57,36 +57,36 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Меню навигации"
-      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg p-6 text-ink"
+      className="midnight-landing mn-mobile-menu"
     >
-      <div className="flex items-center justify-between">
-        <span className="text-[18px] font-bold leading-none tracking-tight">
-          Neura<span className="text-accent-ink">.</span>
+      <div className="mn-mobile-menu-top">
+        <span className="mn-brand">
+          Neura
         </span>
         <button
           type="button"
           onClick={onClose}
           aria-label="Закрыть меню"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 text-muted hover:text-accent-ink"
+          className="mn-menu-toggle"
         >
-          <X />
+          <X aria-hidden="true" />
         </button>
       </div>
       <nav
-        className="my-auto flex shrink-0 flex-col gap-8 py-8"
+        className="mn-mobile-nav"
         aria-label="Мобильная навигация"
       >
         {[
-          ["Продукт", "#product"],
+          ["Возможности", "#features"],
+          ["Как работает", "#story"],
           ["Тарифы", "#pricing"],
-          ["Отзывы", "#testimonials"],
           ["FAQ", "#faq"],
         ].map(([label, href]) => (
           <a
             key={href}
             href={href}
             onClick={onClose}
-            className="flex min-h-11 items-center text-[32px] font-display tracking-tight text-ink hover:text-accent-ink"
+            className="mn-mobile-nav-link"
           >
             {label}
           </a>
@@ -94,12 +94,12 @@ export default function MobileMenu({ open, onClose }: MobileMenuProps) {
         <Link
           to="/app"
           onClick={onClose}
-          className="bg-accent text-white mt-4 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-[19px] font-display"
+          className="mn-button mn-button-primary"
         >
           Начать бесплатно
         </Link>
       </nav>
-      <p className="eyebrow">Больше идей. Меньше рутины.</p>
+      <p className="mn-mobile-caption">Больше идей. Меньше рутины.</p>
     </div>,
     document.body,
   );

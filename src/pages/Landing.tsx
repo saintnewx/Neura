@@ -1,8 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import "../styles/landing-midnight.css";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import SocialProof from "../components/SocialProof";
 import BentoGrid from "../components/BentoGrid";
+import UseCases from "../components/UseCases";
 import DemoSection from "../components/DemoSection";
 import Pricing from "../components/Pricing";
 import Testimonials from "../components/Testimonials";
@@ -18,11 +20,38 @@ export default function Landing() {
   const { user, loading } = useAuth();
   const workspace = useWorkspace(user, loading);
   const [, setGeneratorBusy] = useState(false);
+  const lastFocusedControl = useRef<HTMLElement | null>(null);
+  const limitWasOpen = useRef(false);
+
+  // Admission temporarily disables the submit button before opening the dialog.
+  // Restore its earlier focus only when the shared dialog has no valid target.
+  useEffect(() => {
+    const control = lastFocusedControl.current;
+    if (
+      limitWasOpen.current &&
+      !workspace.limitOpen &&
+      document.activeElement === document.body &&
+      control?.isConnected &&
+      !control.matches(":disabled")
+    ) {
+      control.focus();
+    }
+    limitWasOpen.current = workspace.limitOpen;
+  }, [workspace.limitOpen]);
 
   return (
-    <div ref={pageRef}>
+    <div
+      ref={pageRef}
+      className="midnight-landing"
+      onFocusCapture={(event) => {
+        if (!workspace.limitOpen && event.target instanceof HTMLElement) {
+          lastFocusedControl.current = event.target;
+        }
+      }}
+    >
+      <a href="#main" className="mn-skip">Перейти к содержимому</a>
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <Hero />
 
         <Reveal>
@@ -34,6 +63,15 @@ export default function Landing() {
         </Reveal>
 
         <Reveal>
+          <UseCases />
+        </Reveal>
+
+        <div className="mn-generator">
+          <div className="mn-container mn-generator-heading">
+            <p className="mn-label">Попробуйте на своей задаче</p>
+            <h2>Ваш следующий текст<br className="hidden sm:block" /> начинается здесь.</h2>
+            <p className="mn-lead">Опишите идею, укажите важные факты и выберите тон. Это рабочий генератор — результат придёт от AI.</p>
+          </div>
           <DemoSection
             key={user?.id ?? "guest"}
             onBeforeGenerate={workspace.beforeGenerate}
@@ -46,12 +84,12 @@ export default function Landing() {
             variant="landing"
             usage={workspace.usage}
           />
-        </Reveal>
+        </div>
 
         {workspace.historyError && (
           <div
             role="alert"
-            className="max-w-6xl mx-auto px-6 mt-4 text-sm text-error"
+            className="mn-container mn-save-error"
           >
             <p>{workspace.historyError}</p>
             {!!workspace.pendingCount && (
@@ -59,7 +97,7 @@ export default function Landing() {
                 type="button"
                 onClick={() => void workspace.retrySave()}
                 disabled={workspace.saving}
-                className="inline-flex items-center justify-center border border-ink/[0.14] text-text-primary rounded-full px-4 mt-3 transition-transform hover:border-ink/30 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+                className="mn-button"
                 style={{ minHeight: "44px", fontSize: "14px" }}
               >
                 {workspace.saving ? "Сохраняем…" : "Повторить сохранение"}
